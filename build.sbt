@@ -54,8 +54,9 @@ lazy val storage = project
   .settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio"               % "1.0.0-RC17",
-      "dev.zio" %% "zio-interop-guava" % "26.0.0.6+39-390c66c5-SNAPSHOT"
+      "dev.zio"          %% "zio"                 % "1.0.0-RC17",
+      "dev.zio"          %% "zio-interop-guava"   % "26.0.0.6+39-390c66c5-SNAPSHOT",
+      "com.google.cloud" % "google-cloud-storage" % "1.103.1"
     )
   )
   .settings(
@@ -75,8 +76,9 @@ lazy val pubsub = project
   .settings(
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio"               % "1.0.0-RC17",
-      "dev.zio" %% "zio-interop-guava" % "26.0.0.6+39-390c66c5-SNAPSHOT"
+      "dev.zio"          %% "zio"                % "1.0.0-RC17",
+      "dev.zio"          %% "zio-interop-guava"  % "26.0.0.6+39-390c66c5-SNAPSHOT",
+      "com.google.cloud" % "google-cloud-pubsub" % "1.102.1"
     )
   )
   .settings(
