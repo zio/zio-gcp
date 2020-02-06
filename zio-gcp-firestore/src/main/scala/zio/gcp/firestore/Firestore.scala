@@ -1,161 +1,166 @@
 package zio.gcp.firestore
 
 import com.google.api.core.ApiFutureToListenableFuture
+import com.google.cloud
 import com.google.cloud.firestore._
-import zio.gcp.firestore.ZFirestoreException._
-import zio.gcp.firestore.models.{CollectionId, DocumentId, DocumentPath}
+import zio._
+import zio.gcp.firestore.models.{CollectionPath, DocumentId, DocumentPath}
 import zio.interop.guava._
-import zio.{UIO, ZIO}
 
 import scala.jdk.CollectionConverters._
 
-trait Database {
-  val firestore: Database.Service[Any, Any]
+trait FirestoreDB {
+  val firestore: FirestoreDB.Service[Any, Any]
 }
 
-object Database {
+object FirestoreDB {
 
   trait Service[R, T] {
-    def getDocumentSnapshot(docId: DocumentId): ZIO[R, ZFirestoreException, DocumentSnapshot]
 
-    def getCollection(): ZIO[R, Throwable, CollectionReference]
+    def batch: URIO[R, WriteBatch]
 
-    def set[T](docId: DocumentId, data: T): ZIO[R, ZFirestoreException, WriteResult]
+    def close: RIO[R, Unit]
 
-    def create[T](docId: DocumentId, data: T): ZIO[R, ZFirestoreException, WriteResult]
+    def collection(collectionPath: CollectionPath): URIO[R, CollectionReference]
 
-    def delete(docId: DocumentId): ZIO[R, ZFirestoreException, WriteResult]
+    def commit(batch: WriteBatch): RIO[R, List[WriteResult]]
 
-    def batch: ZIO[R, Exception, WriteBatch]
+    def collectionGroup(collectionId: CollectionPath): URIO[R, Query]
 
-    def commit(batch: WriteBatch): ZIO[Any, Throwable, List[WriteResult]]
+    def create[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      data: T
+    ): RIO[R, WriteResult]
 
-    def collection(path: CollectionId): ZIO[R, Exception, CollectionReference]
+    def delete(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): RIO[R, WriteResult]
 
-    def document(path: DocumentPath): ZIO[R, Exception, DocumentReference]
+    def document(
+      collectionPath: CollectionPath,
+      documentPath: DocumentPath
+    ): URIO[R, DocumentReference]
 
-    def getCollections(): ZIO[R, Exception, Seq[CollectionReference]]
+    def getDocumentSnapshot(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): RIO[R, DocumentSnapshot]
 
-    def collectionGroup(collectionId: CollectionId): ZIO[R, Exception, Query]
+    def getCollections(): RIO[R, Seq[CollectionReference]]
 
-    def close(): ZIO[R, Exception, Unit]
+    def set[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      data: T
+    ): RIO[R, WriteResult]
+
   }
 
-}
+  final class Live[T] private (firestore: cloud.firestore.Firestore)
+      extends Service[Any, T] {
 
-trait Firestore[T] extends Database.Service[FirestoreConnection, T] {
+    override def batch: UIO[WriteBatch] = UIO(firestore.batch())
 
-  def collectionId: CollectionId
+    override def close: Task[Unit] = Task(firestore.close())
 
-  override def getDocumentSnapshot(
-    docId: DocumentId
-  ): ZIO[FirestoreConnection, ZFirestoreException, DocumentSnapshot] =
-    ZIO
-      .environment[FirestoreConnection]
-      .flatMap { connection =>
-        fromListenableFuture(
-          UIO.apply(
-            new ApiFutureToListenableFuture[DocumentSnapshot](
-              connection.db
-                .document(makeDocumentPath(docId.id))
-                .get
-            )
+    override def collection(collectionPath: CollectionPath): UIO[CollectionReference] =
+      UIO(firestore.collection(collectionPath.value))
+
+    override def commit(batch: WriteBatch): Task[List[WriteResult]] =
+      fromListenableFuture(
+        UIO(
+          new ApiFutureToListenableFuture[java.util.List[WriteResult]](
+            batch.commit
           )
         )
-      }
-      .mapError(e => handleRpcError(e))
+      ).map(writeResults => writeResults.asScala.toList)
 
-  override def getCollection(): ZIO[FirestoreConnection, Throwable, CollectionReference] =
-    collection(collectionId)
+    override def collectionGroup(
+      collectionPath: CollectionPath
+    ): UIO[Query] = UIO(firestore.collectionGroup(collectionPath.value))
 
-  override def getCollections(): ZIO[FirestoreConnection, Exception, List[CollectionReference]] =
-    ZIO.access(_.db.listCollections.asScala.toList)
-
-  override def document(
-    path: DocumentPath
-  ): ZIO[FirestoreConnection, Exception, DocumentReference] =
-    ZIO.access(_.db.document(path.path))
-
-  override def collectionGroup(
-    collectionId: CollectionId
-  ): ZIO[FirestoreConnection, Exception, Query] =
-    ZIO.access(_.db.collectionGroup(collectionId.id))
-
-  override def collection(
-    path: CollectionId
-  ): ZIO[FirestoreConnection, Exception, CollectionReference] =
-    ZIO.access(_.db.collection(path.id))
-
-  override def commit(batch: WriteBatch): ZIO[Any, Throwable, List[WriteResult]] =
-    fromListenableFuture(
-      UIO.apply(
-        new ApiFutureToListenableFuture[java.util.List[WriteResult]](
-          batch.commit
+    override def create[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      document: T
+    ): Task[WriteResult] =
+      fromListenableFuture(
+        UIO(
+          new ApiFutureToListenableFuture[WriteResult](
+            firestore
+              .collection(collectionPath.value)
+              .document(documentId.value)
+              .create(document)
+          )
         )
       )
-    ).map(wr => wr.asScala.toList)
 
-  override def batch: ZIO[FirestoreConnection, Exception, WriteBatch] = ZIO.access(_.db.batch)
-
-  override def delete(
-    docId: DocumentId
-  ): ZIO[FirestoreConnection, ZFirestoreException, WriteResult] =
-    ZIO
-      .environment[FirestoreConnection]
-      .flatMap { connection =>
-        fromListenableFuture(
-          UIO.apply(
-            new ApiFutureToListenableFuture[WriteResult](
-              connection.db
-                .document(makeDocumentPath(docId.id))
-                .delete
-            )
+    override def delete(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): Task[WriteResult] =
+      fromListenableFuture(
+        UIO(
+          new ApiFutureToListenableFuture[WriteResult](
+            firestore.collection(collectionPath.value).document(documentId.value).delete
           )
         )
-      }
-      .mapError(e => handleRpcError(e))
+      )
 
-  override def create[T](
-    docId: DocumentId,
-    doc: T
-  ): ZIO[FirestoreConnection, ZFirestoreException, WriteResult] =
-    ZIO
-      .environment[FirestoreConnection]
-      .flatMap { connection =>
-        fromListenableFuture(
-          UIO(
-            new ApiFutureToListenableFuture[WriteResult](
-              connection.db
-                .document(makeDocumentPath(docId.id))
-                .create(doc)
-            )
+    override def document(
+      collectionPath: CollectionPath,
+      path: DocumentPath
+    ): UIO[DocumentReference] =
+      UIO(firestore.collection(collectionPath.value).document(path.path))
+
+    override def getDocumentSnapshot(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): Task[DocumentSnapshot] =
+      fromListenableFuture(
+        UIO(
+          new ApiFutureToListenableFuture[DocumentSnapshot](
+            firestore.collection(collectionPath.value).document(documentId.value).get
           )
         )
-      }
-      .mapError(e => handleRpcError(e))
+      )
 
-  override def set[T](
-    docId: DocumentId,
-    data: T
-  ): ZIO[FirestoreConnection, ZFirestoreException, WriteResult] =
-    ZIO
-      .environment[FirestoreConnection]
-      .flatMap { connection =>
-        fromListenableFuture(
-          UIO.apply(
-            new ApiFutureToListenableFuture[WriteResult](
-              connection.db
-                .document(makeDocumentPath(docId.id))
-                .set(data)
-            )
+    override def getCollections(): Task[List[CollectionReference]] =
+      Task(firestore.listCollections.asScala.toList)
+
+    override def set[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      document: T
+    ): Task[WriteResult] =
+      fromListenableFuture(
+        UIO(
+          new ApiFutureToListenableFuture[WriteResult](
+            firestore
+              .collection(collectionPath.value)
+              .document(documentId.value)
+              .set(document)
           )
         )
+      )
+  }
+
+  object Live {
+
+    def open: TaskManaged[FirestoreDB] = {
+      val instance = IO
+        .effect(withDB(FirestoreOptions.getDefaultInstance.toBuilder.build().getService))
+        .refineToOrDie[Exception]
+
+      ZManaged.make(instance)(_.firestore.close.catchAll(_ => IO.succeed()))
+    }
+
+    private def withDB(db: cloud.firestore.Firestore): FirestoreDB =
+      new FirestoreDB {
+        override val firestore: Service[Any, Any] = new FirestoreDB.Live[Any](db)
       }
-      .mapError(e => handleRpcError(e))
-
-  override def close(): ZIO[FirestoreConnection, Exception, Unit] = ZIO.access(_.db.close())
-
-  private def makeDocumentPath(documentId: String): String =
-    s"${collectionId.id}/$documentId"
+  }
 
 }
