@@ -4,7 +4,6 @@ import com.google.api.core.ApiFutureToListenableFuture
 import com.google.cloud
 import com.google.cloud.firestore._
 import zio._
-import zio.gcp.firestore.models.{CollectionPath, DocumentId, DocumentPath}
 import zio.interop.guava._
 
 import scala.jdk.CollectionConverters._
@@ -111,9 +110,9 @@ object FirestoreDB {
 
     override def document(
       collectionPath: CollectionPath,
-      path: DocumentPath
+      documentPath: DocumentPath
     ): UIO[DocumentReference] =
-      UIO(firestore.collection(collectionPath.value).document(path.path))
+      UIO(firestore.collection(collectionPath.value).document(documentPath.path))
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,

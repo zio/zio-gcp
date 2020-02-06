@@ -1,10 +1,13 @@
 package zio.gcp
 
 import com.google.cloud.firestore._
-import zio.gcp.firestore.models.{CollectionPath, DocumentId, DocumentPath}
 import zio.{RIO, URIO, ZIO}
 
 package object firestore {
+
+  final case class DocumentPath(path: String) extends AnyVal
+  final case class DocumentId(value: String) extends AnyVal
+  final case class CollectionPath(value: String) extends AnyVal
 
   trait Firestore[T] extends FirestoreDB.Service[FirestoreDB, T] {
 
