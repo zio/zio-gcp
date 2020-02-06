@@ -1,3 +1,3 @@
 package zio.gcp.firestore.models
 
-final case class DocumentId(id: String) extends AnyVal
+final case class DocumentId(value: String) extends AnyVal

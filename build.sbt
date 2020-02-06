@@ -1,5 +1,6 @@
 ThisBuild / scalaVersion := "2.13.1"
 ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / organization := "org.mikail"
 
 lazy val root = project
   .in(file("."))
@@ -33,7 +34,7 @@ lazy val firestore = project
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
       "dev.zio"          %% "zio"                   % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"     % "26.0.0.6+39-390c66c5-SNAPSHOT",
+      "dev.zio"          %% "zio-interop-guava"     % "28.2.0.0",
       "com.google.cloud" % "google-cloud-firestore" % "1.32.2"
     )
   )
@@ -55,7 +56,7 @@ lazy val storage = project
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
       "dev.zio"          %% "zio"                 % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"   % "26.0.0.6+39-390c66c5-SNAPSHOT",
+      "dev.zio"          %% "zio-interop-guava"   % "28.2.0.0",
       "com.google.cloud" % "google-cloud-storage" % "1.103.1"
     )
   )
@@ -77,7 +78,7 @@ lazy val pubsub = project
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
       "dev.zio"          %% "zio"                % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"  % "26.0.0.6+39-390c66c5-SNAPSHOT",
+      "dev.zio"          %% "zio-interop-guava"  % "28.2.0.0",
       "com.google.cloud" % "google-cloud-pubsub" % "1.102.1"
     )
   )

@@ -8,19 +8,25 @@ object ZFirestoreException {
   final case class ZFAlreadyExistsException(cause: Throwable) extends ZFirestoreException
   final case class ZFCancelledException(cause: Throwable) extends ZFirestoreException
   final case class ZFUnknownException(cause: Throwable) extends ZFirestoreException
-  final case class ZFInvalidArgumentException(cause: Throwable) extends ZFirestoreException
-  final case class ZFDeadlineExceededException(cause: Throwable) extends ZFirestoreException
+  final case class ZFInvalidArgumentException(cause: Throwable)
+      extends ZFirestoreException
+  final case class ZFDeadlineExceededException(cause: Throwable)
+      extends ZFirestoreException
   final case class ZFNotFoundException(cause: Throwable) extends ZFirestoreException
-  final case class ZFPermissionDeniedException(cause: Throwable) extends ZFirestoreException
-  final case class ZFResourceExhaustedException(cause: Throwable) extends ZFirestoreException
-  final case class ZFFailedPreconditionException(cause: Throwable) extends ZFirestoreException
+  final case class ZFPermissionDeniedException(cause: Throwable)
+      extends ZFirestoreException
+  final case class ZFResourceExhaustedException(cause: Throwable)
+      extends ZFirestoreException
+  final case class ZFFailedPreconditionException(cause: Throwable)
+      extends ZFirestoreException
   final case class ZFAbortedException(cause: Throwable) extends ZFirestoreException
   final case class ZFOutOfRangeException(cause: Throwable) extends ZFirestoreException
   final case class ZFUnimplementedException(cause: Throwable) extends ZFirestoreException
   final case class ZFInternalException(cause: Throwable) extends ZFirestoreException
   final case class ZFUnavailableException(cause: Throwable) extends ZFirestoreException
   final case class ZFDataLossException(cause: Throwable) extends ZFirestoreException
-  final case class ZFUnauthenticatedException(cause: Throwable) extends ZFirestoreException
+  final case class ZFUnauthenticatedException(cause: Throwable)
+      extends ZFirestoreException
   final case class ZFFirestoreException(cause: Throwable) extends ZFirestoreException
 
   def handleRpcError(e: Throwable): ZFirestoreException =
