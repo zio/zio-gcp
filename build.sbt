@@ -59,6 +59,28 @@ lazy val firestore = project
     core
   )
 
+  lazy val pubsub = project
+  .in(file("zio-gcp-pubsub"))
+  .settings(
+    resolvers += Resolver.sonatypeRepo("snapshots"),
+    libraryDependencies ++= Seq(
+      "dev.zio"          %% "zio"                % "1.0.0-RC17",
+      "dev.zio"          %% "zio-interop-guava"  % "28.2.0.0",
+      "com.google.cloud" % "google-cloud-pubsub" % "1.102.1"
+    )
+  )
+  .settings(
+    scalafmtOnCompile := true,
+    addCompilerPlugin(scalafixSemanticdb),
+    scalacOptions ++= List(
+      "-Yrangepos",
+      "-Ywarn-unused:imports"
+    )
+  )
+  .dependsOn(
+    core
+  )
+  
 lazy val storage = project
   .in(file("zio-gcp-storage"))
   .settings(
@@ -81,24 +103,3 @@ lazy val storage = project
     core
   )
 
-lazy val pubsub = project
-  .in(file("zio-gcp-pubsub"))
-  .settings(
-    resolvers += Resolver.sonatypeRepo("snapshots"),
-    libraryDependencies ++= Seq(
-      "dev.zio"          %% "zio"                % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"  % "28.2.0.0",
-      "com.google.cloud" % "google-cloud-pubsub" % "1.102.1"
-    )
-  )
-  .settings(
-    scalafmtOnCompile := true,
-    addCompilerPlugin(scalafixSemanticdb),
-    scalacOptions ++= List(
-      "-Yrangepos",
-      "-Ywarn-unused:imports"
-    )
-  )
-  .dependsOn(
-    core
-  )
