@@ -1,5 +1,3 @@
 package zio.gcp.core
 
-class CoreSpec {
-
-}
+class CoreSpec {}

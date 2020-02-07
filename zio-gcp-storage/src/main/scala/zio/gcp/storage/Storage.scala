@@ -1,7 +1,6 @@
 package zio.gcp.storage
 
-import com.google.cloud.storage.BucketInfo
-import zio.URIO
+import zio._
 
 trait Storage {
   val storage: Storage.Service[Any]
@@ -10,6 +9,5 @@ trait Storage {
 object Storage {
   trait Service[R] {
     def create(bucketInfo: BucketInfo): URIO[R, BucketInfo]
-
   }
 }
