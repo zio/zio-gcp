@@ -57,8 +57,7 @@ object FirestoreDB {
 
   }
 
-  final class Live[T] private (firestore: cloud.firestore.Firestore)
-      extends Service[Any, T] {
+  final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
 
     override def batch: UIO[WriteBatch] = UIO(firestore.batch())
 

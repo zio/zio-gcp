@@ -28,22 +28,39 @@ package object firestore {
     def collectionGroup(collectionId: CollectionPath): URIO[FirestoreDB, Query] =
       ZIO.accessM(_.firestore.collectionGroup(collectionId))
 
-    def create[T](documentId: DocumentId, document: T): RIO[FirestoreDB, WriteResult] =
+    def create[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      document: T
+    ): RIO[FirestoreDB, WriteResult] =
       ZIO.accessM(_.firestore.create(collectionPath, documentId, document))
 
-    def delete(documentId: DocumentId): RIO[FirestoreDB, WriteResult] =
+    def delete(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): RIO[FirestoreDB, WriteResult] =
       ZIO.accessM(_.firestore.delete(collectionPath, documentId))
 
-    def document(documentPath: DocumentPath): URIO[FirestoreDB, DocumentReference] =
+    def document(
+      collectionPath: CollectionPath,
+      documentPath: DocumentPath
+    ): URIO[FirestoreDB, DocumentReference] =
       ZIO.accessM(_.firestore.document(collectionPath, documentPath))
 
-    def getDocumentSnapshot(documentId: DocumentId): RIO[FirestoreDB, DocumentSnapshot] =
+    def getDocumentSnapshot(
+      collectionPath: CollectionPath,
+      documentId: DocumentId
+    ): RIO[FirestoreDB, DocumentSnapshot] =
       ZIO.accessM(_.firestore.getDocumentSnapshot(collectionPath, documentId))
 
     def getCollections(): RIO[FirestoreDB, Seq[CollectionReference]] =
       ZIO.accessM(_.firestore.getCollections())
 
-    def set[T](documentId: DocumentId, document: T): RIO[FirestoreDB, WriteResult] =
+    def set[T](
+      collectionPath: CollectionPath,
+      documentId: DocumentId,
+      document: T
+    ): RIO[FirestoreDB, WriteResult] =
       ZIO.accessM(_.firestore.set(collectionPath, documentId, document))
   }
 
