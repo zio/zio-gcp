@@ -5,7 +5,7 @@ import zio.{RIO, URIO, ZIO}
 
 package object firestore {
 
-  final case class DocumentPath(path: String) extends AnyVal
+  final case class DocumentPath(value: String) extends AnyVal
   final case class DocumentId(value: String) extends AnyVal
   final case class CollectionPath(value: String) extends AnyVal
 

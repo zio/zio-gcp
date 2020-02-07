@@ -112,7 +112,7 @@ object FirestoreDB {
       collectionPath: CollectionPath,
       documentPath: DocumentPath
     ): UIO[DocumentReference] =
-      UIO(firestore.collection(collectionPath.value).document(documentPath.path))
+      UIO(firestore.collection(collectionPath.value).document(documentPath.value))
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,
