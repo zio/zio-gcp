@@ -2,6 +2,15 @@ ThisBuild / scalaVersion := "2.13.1"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "org.mikail"
 
+developers := List(
+  Developer(
+    "mikail-khan",
+    "Mika'il Khan",
+    "mikail.dev.io@gmail.com",
+    url("https://github.com/mikail-khan")
+  )
+)
+
 lazy val root = project
   .in(file("."))
   .settings(skip in publish := true)
