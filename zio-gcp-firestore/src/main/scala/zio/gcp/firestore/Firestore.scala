@@ -153,7 +153,7 @@ object FirestoreDB {
         .effect(withDB(FirestoreOptions.getDefaultInstance.toBuilder.build().getService))
         .refineToOrDie[Exception]
 
-      ZManaged.make(instance)(_.firestore.close.catchAll(_ => IO.succeed()))
+      ZManaged.make(instance)(_.firestore.close.catchAll(_ => IO.unit))
     }
 
     private def withDB(db: cloud.firestore.Firestore): FirestoreDB =
