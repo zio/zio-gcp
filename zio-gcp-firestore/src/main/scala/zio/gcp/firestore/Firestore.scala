@@ -16,15 +16,15 @@ object FirestoreDB {
 
   trait Service[R, T] {
 
-    def batch: URIO[R, WriteBatch]
+    def batch: RIO[R, WriteBatch]
 
     def close: RIO[R, Unit]
 
-    def collection(collectionPath: CollectionPath): URIO[R, CollectionReference]
+    def collection(collectionPath: CollectionPath): RIO[R, CollectionReference]
 
     def commit(batch: WriteBatch): RIO[R, List[WriteResult]]
 
-    def collectionGroup(collectionId: CollectionPath): URIO[R, Query]
+    def collectionGroup(collectionId: CollectionPath): RIO[R, Query]
 
     def create(
       collectionPath: CollectionPath,
@@ -40,7 +40,7 @@ object FirestoreDB {
     def document(
       collectionPath: CollectionPath,
       documentPath: DocumentPath
-    ): URIO[R, DocumentReference]
+    ): RIO[R, DocumentReference]
 
     def getDocumentSnapshot(
       collectionPath: CollectionPath,
@@ -59,12 +59,12 @@ object FirestoreDB {
 
   final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
 
-    override def batch: UIO[WriteBatch] = UIO(firestore.batch())
+    override def batch: Task[WriteBatch] = IO.effect(firestore.batch())
 
-    override def close: Task[Unit] = Task(firestore.close())
+    override def close: Task[Unit] = IO.effect(firestore.close())
 
-    override def collection(collectionPath: CollectionPath): UIO[CollectionReference] =
-      UIO(firestore.collection(collectionPath.value))
+    override def collection(collectionPath: CollectionPath): Task[CollectionReference] =
+      IO.effect(firestore.collection(collectionPath.value))
 
     override def commit(batch: WriteBatch): Task[List[WriteResult]] =
       fromListenableFuture(
@@ -77,7 +77,7 @@ object FirestoreDB {
 
     override def collectionGroup(
       collectionPath: CollectionPath
-    ): UIO[Query] = UIO(firestore.collectionGroup(collectionPath.value))
+    ): Task[Query] = IO.effect(firestore.collectionGroup(collectionPath.value))
 
     override def create(
       collectionPath: CollectionPath,
@@ -110,8 +110,8 @@ object FirestoreDB {
     override def document(
       collectionPath: CollectionPath,
       documentPath: DocumentPath
-    ): UIO[DocumentReference] =
-      UIO(firestore.collection(collectionPath.value).document(documentPath.value))
+    ): Task[DocumentReference] =
+      IO.effect(firestore.collection(collectionPath.value).document(documentPath.value))
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,

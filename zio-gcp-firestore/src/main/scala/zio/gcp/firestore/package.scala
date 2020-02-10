@@ -1,7 +1,7 @@
 package zio.gcp
 
 import com.google.cloud.firestore._
-import zio.{RIO, URIO, ZIO}
+import zio.{RIO, ZIO}
 
 package object firestore {
 
@@ -13,17 +13,17 @@ package object firestore {
 
     def collectionPath: CollectionPath
 
-    def batch: URIO[FirestoreDB, WriteBatch] = ZIO.accessM(_.firestore.batch)
+    def batch: RIO[FirestoreDB, WriteBatch] = ZIO.accessM(_.firestore.batch)
 
     def collection(
       collectionPath: CollectionPath
-    ): URIO[FirestoreDB, CollectionReference] =
+    ): RIO[FirestoreDB, CollectionReference] =
       ZIO.accessM(_.firestore.collection(collectionPath))
 
     def commit(batch: WriteBatch): RIO[FirestoreDB, List[WriteResult]] =
       ZIO.accessM(_.firestore.commit(batch))
 
-    def collectionGroup(collectionId: CollectionPath): URIO[FirestoreDB, Query] =
+    def collectionGroup(collectionId: CollectionPath): RIO[FirestoreDB, Query] =
       ZIO.accessM(_.firestore.collectionGroup(collectionId))
 
     def create(
@@ -42,7 +42,7 @@ package object firestore {
     def document(
       collectionPath: CollectionPath,
       documentPath: DocumentPath
-    ): URIO[FirestoreDB, DocumentReference] =
+    ): RIO[FirestoreDB, DocumentReference] =
       ZIO.accessM(_.firestore.document(collectionPath, documentPath))
 
     def getDocumentSnapshot(
