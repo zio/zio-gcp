@@ -26,7 +26,7 @@ package object firestore {
     def collectionGroup(collectionId: CollectionPath): URIO[FirestoreDB, Query] =
       ZIO.accessM(_.firestore.collectionGroup(collectionId))
 
-    def create[T](
+    def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: T
@@ -54,7 +54,7 @@ package object firestore {
     def getCollections(): RIO[FirestoreDB, List[CollectionReference]] =
       ZIO.accessM(_.firestore.getCollections())
 
-    def set[T](
+    def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: T

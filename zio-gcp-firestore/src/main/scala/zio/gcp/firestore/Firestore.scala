@@ -26,7 +26,7 @@ object FirestoreDB {
 
     def collectionGroup(collectionId: CollectionPath): URIO[R, Query]
 
-    def create[T](
+    def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       data: T
@@ -49,7 +49,7 @@ object FirestoreDB {
 
     def getCollections(): RIO[R, List[CollectionReference]]
 
-    def set[T](
+    def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       data: T
@@ -79,7 +79,7 @@ object FirestoreDB {
       collectionPath: CollectionPath
     ): UIO[Query] = UIO(firestore.collectionGroup(collectionPath.value))
 
-    override def create[T](
+    override def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: T
@@ -128,7 +128,7 @@ object FirestoreDB {
     override def getCollections(): Task[List[CollectionReference]] =
       Task(firestore.listCollections.asScala.toList)
 
-    override def set[T](
+    override def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: T
