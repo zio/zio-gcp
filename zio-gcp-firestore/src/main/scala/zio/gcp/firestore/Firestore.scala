@@ -126,7 +126,7 @@ object FirestoreDB {
       )
 
     override def getCollections(): Task[List[CollectionReference]] =
-      Task(firestore.listCollections.asScala.toList)
+      IO.effect(firestore.listCollections.asScala.toList)
 
     override def set(
       collectionPath: CollectionPath,
