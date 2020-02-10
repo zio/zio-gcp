@@ -15,6 +15,8 @@ package object firestore {
 
     def batch: RIO[FirestoreDB, WriteBatch] = RIO.accessM(_.firestore.batch)
 
+    def close: RIO[FirestoreDB, Unit] = RIO.accessM(_.firestore.close)
+
     def collection(
       collectionPath: CollectionPath
     ): RIO[FirestoreDB, CollectionReference] =
