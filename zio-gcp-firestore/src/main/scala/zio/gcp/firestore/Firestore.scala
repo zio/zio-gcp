@@ -59,12 +59,12 @@ object FirestoreDB {
 
   final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
 
-    override def batch: Task[WriteBatch] = IO.effect(firestore.batch())
+    override def batch: Task[WriteBatch] = Task(firestore.batch())
 
-    override def close: Task[Unit] = IO.effect(firestore.close())
+    override def close: Task[Unit] = Task(firestore.close())
 
     override def collection(collectionPath: CollectionPath): Task[CollectionReference] =
-      IO.effect(firestore.collection(collectionPath.value))
+      Task(firestore.collection(collectionPath.value))
 
     override def commit(batch: WriteBatch): Task[List[WriteResult]] =
       fromListenableFuture(
@@ -77,7 +77,7 @@ object FirestoreDB {
 
     override def collectionGroup(
       collectionPath: CollectionPath
-    ): Task[Query] = IO.effect(firestore.collectionGroup(collectionPath.value))
+    ): Task[Query] = Task(firestore.collectionGroup(collectionPath.value))
 
     override def create(
       collectionPath: CollectionPath,
@@ -111,7 +111,7 @@ object FirestoreDB {
       collectionPath: CollectionPath,
       documentPath: DocumentPath
     ): Task[DocumentReference] =
-      IO.effect(firestore.collection(collectionPath.value).document(documentPath.value))
+      Task(firestore.collection(collectionPath.value).document(documentPath.value))
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,
@@ -126,7 +126,7 @@ object FirestoreDB {
       )
 
     override def getCollections(): Task[List[CollectionReference]] =
-      IO.effect(firestore.listCollections.asScala.toList)
+      Task(firestore.listCollections.asScala.toList)
 
     override def set(
       collectionPath: CollectionPath,
