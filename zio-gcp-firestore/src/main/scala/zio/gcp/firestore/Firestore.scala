@@ -47,7 +47,7 @@ object FirestoreDB {
       documentId: DocumentId
     ): RIO[R, DocumentSnapshot]
 
-    def getCollections(): RIO[R, Seq[CollectionReference]]
+    def getCollections(): RIO[R, List[CollectionReference]]
 
     def set[T](
       collectionPath: CollectionPath,

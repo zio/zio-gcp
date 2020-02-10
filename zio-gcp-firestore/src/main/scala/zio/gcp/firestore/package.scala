@@ -15,8 +15,6 @@ package object firestore {
 
     def batch: URIO[FirestoreDB, WriteBatch] = ZIO.accessM(_.firestore.batch)
 
-    def close: RIO[FirestoreDB, Unit] = ZIO.accessM(_.firestore.close)
-
     def collection(
       collectionPath: CollectionPath
     ): URIO[FirestoreDB, CollectionReference] =
@@ -53,7 +51,7 @@ package object firestore {
     ): RIO[FirestoreDB, DocumentSnapshot] =
       ZIO.accessM(_.firestore.getDocumentSnapshot(collectionPath, documentId))
 
-    def getCollections(): RIO[FirestoreDB, Seq[CollectionReference]] =
+    def getCollections(): RIO[FirestoreDB, List[CollectionReference]] =
       ZIO.accessM(_.firestore.getCollections())
 
     def set[T](
