@@ -2,6 +2,7 @@ package zio.gcp
 
 import com.google.cloud.firestore._
 import zio.RIO
+import scala.jdk.CollectionConverters._
 
 package object firestore {
 
@@ -14,8 +15,6 @@ package object firestore {
     def collectionPath: CollectionPath
 
     def batch: RIO[FirestoreDB, WriteBatch] = RIO.accessM(_.firestore.batch)
-
-    def close: RIO[FirestoreDB, Unit] = RIO.accessM(_.firestore.close)
 
     def collection(
       collectionPath: CollectionPath
@@ -55,6 +54,18 @@ package object firestore {
 
     def getCollections(): RIO[FirestoreDB, List[CollectionReference]] =
       RIO.accessM(_.firestore.getCollections())
+
+    def getAllDocuments(
+      collectionPath: CollectionPath,
+      documentIds: List[DocumentId]
+    ): RIO[FirestoreDB, List[QueryDocumentSnapshot]] =
+      RIO.accessM(
+        _.firestore
+          .getAll(collectionPath, documentIds)
+          .map { querySnapshot =>
+            querySnapshot.getDocuments().asScala.toList
+          }
+      )
 
     def set(
       collectionPath: CollectionPath,
