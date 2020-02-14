@@ -18,8 +18,6 @@ object FirestoreDB {
 
     def batch: RIO[R, WriteBatch]
 
-    def close: RIO[R, Unit]
-
     def collection(collectionPath: CollectionPath): RIO[R, CollectionReference]
 
     def commit(batch: WriteBatch): RIO[R, List[WriteResult]]
@@ -65,8 +63,6 @@ object FirestoreDB {
   final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
 
     override def batch: Task[WriteBatch] = Task(firestore.batch())
-
-    override def close: Task[Unit] = Task(firestore.close())
 
     override def collection(collectionPath: CollectionPath): Task[CollectionReference] =
       Task(firestore.collection(collectionPath.value))
@@ -168,10 +164,12 @@ object FirestoreDB {
 
     def open: TaskManaged[FirestoreDB] = {
       val instance = IO
-        .effect(withDB(FirestoreOptions.getDefaultInstance.toBuilder.build().getService))
+        .effect(FirestoreOptions.getDefaultInstance.toBuilder.build().getService)
         .refineToOrDie[Exception]
 
-      ZManaged.make(instance)(_.firestore.close.catchAll(_ => IO.unit))
+      ZManaged
+        .make(instance)(firestore => IO.effect(firestore.close).catchAll(_ => IO.unit))
+        .map(withDB)
     }
 
     private def withDB(db: cloud.firestore.Firestore): FirestoreDB =
