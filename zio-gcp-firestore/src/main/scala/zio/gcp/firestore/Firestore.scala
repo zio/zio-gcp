@@ -14,7 +14,7 @@ trait FirestoreDB {
 
 object FirestoreDB {
 
-  trait Service[R, T] {
+  trait Service[R, A] {
 
     def batch: RIO[R, WriteBatch]
 
@@ -27,7 +27,7 @@ object FirestoreDB {
     def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      data: T
+      data: A
     ): RIO[R, WriteResult]
 
     def delete(
@@ -55,12 +55,12 @@ object FirestoreDB {
     def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      data: T
+      data: A
     ): RIO[R, WriteResult]
 
   }
 
-  final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
+  final class Live[A] private (firestore: cloud.firestore.Firestore) extends Service[Any, A] {
 
     override def batch: Task[WriteBatch] = Task(firestore.batch)
 
@@ -83,7 +83,7 @@ object FirestoreDB {
     override def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      document: T
+      document: A
     ): Task[WriteResult] =
       fromListenableFuture(
         UIO(
@@ -146,7 +146,7 @@ object FirestoreDB {
     override def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      document: T
+      document: A
     ): Task[WriteResult] =
       fromListenableFuture(
         UIO(

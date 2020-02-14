@@ -10,7 +10,7 @@ package object firestore {
   final case class DocumentId(value: String) extends AnyVal
   final case class CollectionPath(value: String) extends AnyVal
 
-  trait Firestore[T] extends FirestoreDB.Service[FirestoreDB, T] {
+  trait Firestore[A] extends FirestoreDB.Service[FirestoreDB, A] {
 
     def collectionPath: CollectionPath
 
@@ -30,7 +30,7 @@ package object firestore {
     def create(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      document: T
+      document: A
     ): RIO[FirestoreDB, WriteResult] =
       RIO.accessM(_.firestore.create(collectionPath, documentId, document))
 
@@ -70,7 +70,7 @@ package object firestore {
     def set(
       collectionPath: CollectionPath,
       documentId: DocumentId,
-      document: T
+      document: A
     ): RIO[FirestoreDB, WriteResult] =
       RIO.accessM(_.firestore.set(collectionPath, documentId, document))
   }
