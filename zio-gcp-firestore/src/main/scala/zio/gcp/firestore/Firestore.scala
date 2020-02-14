@@ -45,7 +45,7 @@ object FirestoreDB {
       documentId: DocumentId
     ): RIO[R, DocumentSnapshot]
 
-    def getCollections(): RIO[R, List[CollectionReference]]
+    def getCollections: RIO[R, List[CollectionReference]]
 
     def getAll(
       collectionPath: CollectionPath,
@@ -62,7 +62,7 @@ object FirestoreDB {
 
   final class Live[T] private (firestore: cloud.firestore.Firestore) extends Service[Any, T] {
 
-    override def batch: Task[WriteBatch] = Task(firestore.batch())
+    override def batch: Task[WriteBatch] = Task(firestore.batch)
 
     override def collection(collectionPath: CollectionPath): Task[CollectionReference] =
       Task(firestore.collection(collectionPath.value))
@@ -126,7 +126,7 @@ object FirestoreDB {
         )
       )
 
-    override def getCollections(): Task[List[CollectionReference]] =
+    override def getCollections: Task[List[CollectionReference]] =
       Task(firestore.listCollections.asScala.toList)
 
     override def getAll(
@@ -138,7 +138,7 @@ object FirestoreDB {
           new ApiFutureToListenableFuture[QuerySnapshot](
             firestore
               .collection(collectionPath.value)
-              .get()
+              .get
           )
         )
       )
@@ -164,7 +164,7 @@ object FirestoreDB {
 
     def open: TaskManaged[FirestoreDB] = {
       val instance = IO
-        .effect(FirestoreOptions.getDefaultInstance.toBuilder.build().getService)
+        .effect(FirestoreOptions.getDefaultInstance.toBuilder.build.getService)
         .refineToOrDie[Exception]
 
       ZManaged

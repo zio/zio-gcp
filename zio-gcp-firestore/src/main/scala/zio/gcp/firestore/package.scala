@@ -52,8 +52,8 @@ package object firestore {
     ): RIO[FirestoreDB, DocumentSnapshot] =
       RIO.accessM(_.firestore.getDocumentSnapshot(collectionPath, documentId))
 
-    def getCollections(): RIO[FirestoreDB, List[CollectionReference]] =
-      RIO.accessM(_.firestore.getCollections())
+    def getCollections: RIO[FirestoreDB, List[CollectionReference]] =
+      RIO.accessM(_.firestore.getCollections)
 
     def getAllDocuments(
       collectionPath: CollectionPath,
@@ -63,7 +63,7 @@ package object firestore {
         _.firestore
           .getAll(collectionPath, documentIds)
           .map { querySnapshot =>
-            querySnapshot.getDocuments().asScala.toList
+            querySnapshot.getDocuments.asScala.toList
           }
       )
 
