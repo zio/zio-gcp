@@ -168,7 +168,7 @@ object FirestoreDB {
         .refineToOrDie[Exception]
 
       ZManaged
-        .make(instance)(firestore => IO.effect(firestore.close).catchAll(_ => IO.unit))
+        .make(instance)(firestore => IO.effect(firestore.close).orDie)
         .map(withDB)
     }
 
