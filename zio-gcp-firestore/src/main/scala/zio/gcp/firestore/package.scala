@@ -2,7 +2,6 @@ package zio.gcp
 
 import com.google.cloud.firestore._
 import zio.RIO
-import scala.jdk.CollectionConverters._
 
 package object firestore {
 
@@ -61,10 +60,7 @@ package object firestore {
     ): RIO[FirestoreDB, List[QueryDocumentSnapshot]] =
       RIO.accessM(
         _.firestore
-          .getAll(collectionPath, documentIds)
-          .map { querySnapshot =>
-            querySnapshot.getDocuments.asScala.toList
-          }
+          .getAllDocuments(collectionPath, documentIds)
       )
 
     def set(

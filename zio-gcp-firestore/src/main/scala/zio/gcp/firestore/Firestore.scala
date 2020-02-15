@@ -47,10 +47,10 @@ object FirestoreDB {
 
     def getCollections: RIO[R, List[CollectionReference]]
 
-    def getAll(
+    def getAllDocuments(
       collectionPath: CollectionPath,
       documentIds: List[DocumentId]
-    ): RIO[R, QuerySnapshot]
+    ): RIO[R, List[QueryDocumentSnapshot]]
 
     def set(
       collectionPath: CollectionPath,
@@ -129,10 +129,10 @@ object FirestoreDB {
     override def getCollections: Task[List[CollectionReference]] =
       Task(firestore.listCollections.asScala.toList)
 
-    override def getAll(
+    override def getAllDocuments(
       collectionPath: CollectionPath,
       documentIds: List[DocumentId]
-    ): Task[QuerySnapshot] =
+    ): Task[List[QueryDocumentSnapshot]] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[QuerySnapshot](
@@ -141,7 +141,7 @@ object FirestoreDB {
               .get
           )
         )
-      )
+      ).map(querySnapshot => querySnapshot.getDocuments.asScala.toList)
 
     override def set(
       collectionPath: CollectionPath,
