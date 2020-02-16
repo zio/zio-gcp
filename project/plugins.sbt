@@ -1,3 +1,5 @@
-addSbtPlugin("org.scoverage"     % "sbt-scoverage"   % "latest.integration")
-addSbtPlugin("org.scalameta"     % "sbt-scalafmt"    % "latest.integration")
-addSbtPlugin("ch.epfl.scala"     % "sbt-scalafix"    % "latest.integration")
+addSbtPlugin("org.scalameta"                     % "sbt-scalafmt"                  % "2.3.1")
+addSbtPlugin("org.scalameta"                     % "sbt-mdoc"                      % "1.3.6")
+addSbtPlugin("ch.epfl.scala"                     % "sbt-bloop"                     % "1.3.5")
+addSbtPlugin("ch.epfl.scala"                     % "sbt-scalafix"                  % "0.9.11")
+addSbtPlugin("com.geirsson"                      % "sbt-ci-release"                % "1.5.2")
