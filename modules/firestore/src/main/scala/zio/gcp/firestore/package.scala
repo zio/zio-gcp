@@ -5,8 +5,8 @@ import zio.RIO
 
 package object firestore {
 
-  final case class DocumentPath(value: String) extends AnyVal
-  final case class DocumentId(value: String) extends AnyVal
+  final case class DocumentPath(value: String)   extends AnyVal
+  final case class DocumentId(value: String)     extends AnyVal
   final case class CollectionPath(value: String) extends AnyVal
 
   trait Firestore[A] extends FirestoreDB.Service[FirestoreDB, A] {

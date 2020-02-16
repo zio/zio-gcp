@@ -4,7 +4,7 @@ import zio.URIO
 import com.google.api.gax.batching.FlowControlSettings
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.cloud.pubsub.v1.MessageReceiver
-import com.google.cloud.pubsub.v1.{Subscriber => GSubscriber}
+import com.google.cloud.pubsub.v1.{ Subscriber => GSubscriber }
 import zio.Task
 import com.google.api.gax.rpc.TransportChannelProvider
 import com.google.api.gax.core.CredentialsProvider

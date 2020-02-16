@@ -1,7 +1,7 @@
 package zio.gcp.pubsub
 
 import zio.RIO
-import com.google.cloud.pubsub.v1.{Publisher => GPublisher}
+import com.google.cloud.pubsub.v1.{ Publisher => GPublisher }
 import zio.Task
 import com.google.pubsub.v1.PubsubMessage
 import zio.URIO

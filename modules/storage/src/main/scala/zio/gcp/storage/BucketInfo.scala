@@ -1,6 +1,6 @@
 package zio.gcp.storage
 
-import com.google.cloud.storage.{BucketInfo => GBucketInfo}
+import com.google.cloud.storage.{ BucketInfo => GBucketInfo }
 import zio.UIO
 import com.google.cloud.storage.Acl
 import scala.jdk.CollectionConverters._
