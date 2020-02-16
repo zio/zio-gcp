@@ -98,17 +98,17 @@ lint: &lint
     - <<: *clean_cache
     - <<: *save_cache
 
-mdoc: &mdoc
-  steps:
-    - checkout
-    - <<: *load_cache
-    - run:
-        name: Generate documentation
-        command: |
-          ./sbt core/doc firestore/doc pubsub/doc storage/doc
-          ./sbt ++${SCALA_VERSION}! mdoc
-    - <<: *clean_cache
-    - <<: *save_cache
+# mdoc: &mdoc
+#   steps:
+#     - checkout
+#     - <<: *load_cache
+#     - run:
+#         name: Generate documentation
+#         command: |
+#           ./sbt core/doc firestore/doc pubsub/doc storage/doc
+#           ./sbt ++${SCALA_VERSION}! mdoc
+#     - <<: *clean_cache
+#     - <<: *save_cache
 
 test: &test
   steps:
@@ -187,12 +187,12 @@ jobs:
       - <<: *scala_212
       - <<: *jdk_8
 
-  mdoc:
-    <<: *mdoc
-    <<: *machine_ubuntu
-    environment:
-      - <<: *scala_212
-      - <<: *jdk_8
+  # mdoc:
+  #   <<: *mdoc
+  #   <<: *machine_ubuntu
+  #   environment:
+  #     - <<: *scala_212
+  #     - <<: *jdk_8
 
   test_212_jdk8:
     <<: *test
@@ -235,11 +235,11 @@ workflows:
       - lint:
           filters:
             <<: *filter_tags
-      - mdoc:
-          requires:
-            - lint
-          filters:
-            <<: *filter_tags
+      # - mdoc:
+      #     requires:
+      #       - lint
+      #     filters:
+      #       <<: *filter_tags
       - test_212_jdk8:
           requires:
             - lint
@@ -271,7 +271,6 @@ workflows:
           context: Sonatype2
           requires:
             # TODO: depend on microsite once website is ready
-            - mdoc
             - test_212_jdk8
             - test_212_jdk11
             - test_213_jdk8
