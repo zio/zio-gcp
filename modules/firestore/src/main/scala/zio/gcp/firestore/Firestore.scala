@@ -9,12 +9,12 @@ import zio.interop.guava._
 import scala.jdk.CollectionConverters._
 
 trait FirestoreDB {
-  val firestore: FirestoreDB.Service[Any, Any]
+  val firestore: FirestoreDB.Service[Any]
 }
 
 object FirestoreDB {
 
-  trait Service[R, A] {
+  trait Service[R] {
 
     def batch: RIO[R, WriteBatch]
 
@@ -24,7 +24,7 @@ object FirestoreDB {
 
     def collectionGroup(collectionId: CollectionPath): RIO[R, Query]
 
-    def create(
+    def create[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       data: A
@@ -52,7 +52,7 @@ object FirestoreDB {
       documentIds: List[DocumentId]
     ): RIO[R, List[QueryDocumentSnapshot]]
 
-    def set(
+    def set[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       data: A
@@ -60,7 +60,7 @@ object FirestoreDB {
 
   }
 
-  final class Live[A] private (firestore: cloud.firestore.Firestore) extends Service[Any, A] {
+  final class Live private (firestore: cloud.firestore.Firestore) extends Service[Any] {
 
     override def batch: Task[WriteBatch] = Task(firestore.batch)
 
@@ -80,7 +80,7 @@ object FirestoreDB {
       collectionPath: CollectionPath
     ): Task[Query] = Task(firestore.collectionGroup(collectionPath.value))
 
-    override def create(
+    override def create[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: A
@@ -143,7 +143,7 @@ object FirestoreDB {
         )
       ).map(querySnapshot => querySnapshot.getDocuments.asScala.toList)
 
-    override def set(
+    override def set[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: A
@@ -174,7 +174,7 @@ object FirestoreDB {
 
     private def withDB(db: cloud.firestore.Firestore): FirestoreDB =
       new FirestoreDB {
-        override val firestore: Service[Any, Any] = new FirestoreDB.Live[Any](db)
+        override val firestore: Service[Any] = new FirestoreDB.Live(db)
       }
   }
 

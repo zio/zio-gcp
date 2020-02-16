@@ -3,16 +3,7 @@ package zio.gcp
 import com.google.cloud.firestore._
 import zio.RIO
 
-package object firestore {
-
-  final case class DocumentPath(value: String)   extends AnyVal
-  final case class DocumentId(value: String)     extends AnyVal
-  final case class CollectionPath(value: String) extends AnyVal
-
-  trait Firestore[A] extends FirestoreDB.Service[FirestoreDB, A] {
-
-    def collectionPath: CollectionPath
-
+package object firestore extends FirestoreDB.Service[FirestoreDB] {
     def batch: RIO[FirestoreDB, WriteBatch] = RIO.accessM(_.firestore.batch)
 
     def collection(
@@ -26,7 +17,7 @@ package object firestore {
     def collectionGroup(collectionId: CollectionPath): RIO[FirestoreDB, Query] =
       RIO.accessM(_.firestore.collectionGroup(collectionId))
 
-    def create(
+    def create[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: A
@@ -63,12 +54,10 @@ package object firestore {
           .getAllDocuments(collectionPath, documentIds)
       )
 
-    def set(
+    def set[A](
       collectionPath: CollectionPath,
       documentId: DocumentId,
       document: A
     ): RIO[FirestoreDB, WriteResult] =
       RIO.accessM(_.firestore.set(collectionPath, documentId, document))
   }
-
-}
