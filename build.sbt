@@ -1,15 +1,29 @@
-ThisBuild / scalaVersion := "2.13.1"
-ThisBuild / version := "0.1.0-SNAPSHOT"
-ThisBuild / organization := "org.mikail"
+import BuildHelper._
 
-developers := List(
-  Developer(
-    "mikail-khan",
-    "Mika'il Khan",
-    "mikail.dev.io@gmail.com",
-    url("https://github.com/mikail-khan")
+inThisBuild(
+  List(
+    organization := "dev.zio",
+    homepage := Some(url("https://zio.github.io/zio-gcp/")),
+    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    developers := List(
+      Developer(
+        "mikail-khan",
+        "Mika'il Khan",
+        "mikail.dev.io@gmail.com",
+        url("https://github.com/mikail-khan")
+      )
+    ),
+    pgpPassphrase := sys.env.get("PGP_PASSWORD").map(_.toArray),
+    pgpPublicRing := file("/tmp/public.asc"),
+    pgpSecretRing := file("/tmp/secret.asc"),
+    scmInfo := Some(
+      ScmInfo(url("https://github.com/zio/zio-gcp/"), "scm:git:git@github.com:zio/zio-gcp.git")
+    )
   )
 )
+
+addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
+addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheckAll")
 
 lazy val root = project
   .in(file("."))
@@ -22,84 +36,58 @@ lazy val root = project
   )
 
 lazy val core = project
-  .in(file("zio-gcp-core"))
+  .in(file("modules/core"))
+  .settings(stdSettings("zio-gcp-core"))
+  .settings(buildInfoSettings("zio.gcp.core"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio" % "1.0.0-RC17"
+      "dev.zio"                %% "zio"                     % "1.0.0-RC17",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
     )
   )
-  .settings(
-    scalafmtOnCompile := true,
-    addCompilerPlugin(scalafixSemanticdb),
-    scalacOptions ++= List(
-      "-Yrangepos",
-      "-Ywarn-unused:imports"
-    )
-  )
+  .enablePlugins(BuildInfoPlugin)
 
 lazy val firestore = project
-  .in(file("zio-gcp-firestore"))
+  .in(file("modules/firestore"))
+  .dependsOn(core)
+  .settings(stdSettings("zio-gcp-firestore"))
+  .settings(buildInfoSettings("zio.gcp.firestore"))
   .settings(
-    resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.zio"          %% "zio"                   % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"     % "28.2.0.0",
-      "com.google.cloud" % "google-cloud-firestore" % "1.32.2"
+      "dev.zio"                %% "zio"                     % "1.0.0-RC17",
+      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
+      "com.google.cloud"       % "google-cloud-firestore"   % "1.32.2",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
     )
   )
-  .settings(
-    scalafmtOnCompile := true,
-    addCompilerPlugin(scalafixSemanticdb),
-    scalacOptions ++= List(
-      "-Yrangepos",
-      "-Ywarn-unused:imports"
-    )
-  )
-  .dependsOn(
-    core
-  )
+  .enablePlugins(BuildInfoPlugin)
 
-  lazy val pubsub = project
-  .in(file("zio-gcp-pubsub"))
+lazy val pubsub = project
+  .in(file("modules/pubsub"))
+  .dependsOn(core)
+  .settings(stdSettings("zio-gcp-pubsub"))
+  .settings(buildInfoSettings("zio.gcp.pubsub"))
   .settings(
-    resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.zio"          %% "zio"                % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"  % "28.2.0.0",
-      "com.google.cloud" % "google-cloud-pubsub" % "1.102.1"
+      "dev.zio"                %% "zio"                     % "1.0.0-RC17",
+      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
+      "com.google.cloud"       % "google-cloud-pubsub"      % "1.102.1",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
     )
   )
-  .settings(
-    scalafmtOnCompile := true,
-    addCompilerPlugin(scalafixSemanticdb),
-    scalacOptions ++= List(
-      "-Yrangepos",
-      "-Ywarn-unused:imports"
-    )
-  )
-  .dependsOn(
-    core
-  )
-  
+  .enablePlugins(BuildInfoPlugin)
+
 lazy val storage = project
-  .in(file("zio-gcp-storage"))
+  .in(file("modules/storage"))
+  .dependsOn(core)
+  .settings(stdSettings("zio-gcp-storage"))
+  .settings(buildInfoSettings("zio.gcp.storage"))
   .settings(
-    resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
-      "dev.zio"          %% "zio"                 % "1.0.0-RC17",
-      "dev.zio"          %% "zio-interop-guava"   % "28.2.0.0",
-      "com.google.cloud" % "google-cloud-storage" % "1.103.1"
+      "dev.zio"                %% "zio"                     % "1.0.0-RC17",
+      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
+      "com.google.cloud"       % "google-cloud-storage"     % "1.103.1",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
     )
   )
-  .settings(
-    scalafmtOnCompile := true,
-    addCompilerPlugin(scalafixSemanticdb),
-    scalacOptions ++= List(
-      "-Yrangepos",
-      "-Ywarn-unused:imports"
-    )
-  )
-  .dependsOn(
-    core
-  )
-
+  .enablePlugins(BuildInfoPlugin)
