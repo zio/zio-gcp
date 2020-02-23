@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
 
 Use the provided `FirestoreDB` wrapper:
 ```scala
-import import zio.gcp.firestore._
+import zio.gcp.firestore._
 
 val makeDocument = def create(
     documentPath: DocumentPath,
