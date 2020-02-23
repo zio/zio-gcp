@@ -20,7 +20,7 @@ object FirestoreDB {
 
     def collection(collectionPath: CollectionPath): RIO[R, CollectionReference]
 
-    def collectionGroup(collectionId: CollectionPath): RIO[R, Query]
+    def collectionGroup(collectionPath: CollectionPath): RIO[R, Query]
 
     def commit(batch: WriteBatch): RIO[R, List[WriteResult]]
 
@@ -42,7 +42,7 @@ object FirestoreDB {
 
     def getDocumentSnapshot(
       collectionPath: CollectionPath,
-      documentId: DocumentPath
+      documentPath: DocumentPath
     ): RIO[R, DocumentSnapshot]
 
     def getCollections: RIO[R, List[CollectionReference]]
@@ -53,7 +53,7 @@ object FirestoreDB {
 
     def set[A](
       collectionPath: CollectionPath,
-      documentId: DocumentPath,
+      documentPath: DocumentPath,
       data: A
     ): RIO[R, WriteResult]
 
@@ -85,7 +85,7 @@ object FirestoreDB {
 
     override def createDocument[A](
       collectionReference: CollectionReference,
-      documentId: DocumentPath,
+      documentPath: DocumentPath,
       document: A
     ): Task[WriteResult] =
       fromListenableFuture(
@@ -93,7 +93,7 @@ object FirestoreDB {
           new ApiFutureToListenableFuture[WriteResult](
             firestore
               .collection(collectionReference.getPath)
-              .document(documentId.value)
+              .document(documentPath.value)
               .create(document)
           )
         )
@@ -101,12 +101,12 @@ object FirestoreDB {
 
     override def delete(
       collectionPath: CollectionPath,
-      documentId: DocumentPath
+      documentPath: DocumentPath
     ): Task[WriteResult] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[WriteResult](
-            firestore.collection(collectionPath.value).document(documentId.value).delete
+            firestore.collection(collectionPath.value).document(documentPath.value).delete
           )
         )
       )
@@ -119,12 +119,12 @@ object FirestoreDB {
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,
-      documentId: DocumentPath
+      documentPath: DocumentPath
     ): Task[DocumentSnapshot] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[DocumentSnapshot](
-            firestore.collection(collectionPath.value).document(documentId.value).get
+            firestore.collection(collectionPath.value).document(documentPath.value).get
           )
         )
       )
@@ -147,7 +147,7 @@ object FirestoreDB {
 
     override def set[A](
       collectionPath: CollectionPath,
-      documentId: DocumentPath,
+      documentPath: DocumentPath,
       document: A
     ): Task[WriteResult] =
       fromListenableFuture(
@@ -155,7 +155,7 @@ object FirestoreDB {
           new ApiFutureToListenableFuture[WriteResult](
             firestore
               .collection(collectionPath.value)
-              .document(documentId.value)
+              .document(documentPath.value)
               .set(document)
           )
         )
