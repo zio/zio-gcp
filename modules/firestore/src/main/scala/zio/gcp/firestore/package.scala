@@ -4,60 +4,65 @@ import com.google.cloud.firestore._
 import zio.RIO
 
 package object firestore extends FirestoreDB.Service[FirestoreDB] {
+
   def batch: RIO[FirestoreDB, WriteBatch] = RIO.accessM(_.firestore.batch)
 
-  def collection(
-    collectionPath: CollectionPath
-  ): RIO[FirestoreDB, CollectionReference] =
-    RIO.accessM(_.firestore.collection(collectionPath))
-
-  def commit(batch: WriteBatch): RIO[FirestoreDB, List[WriteResult]] =
-    RIO.accessM(_.firestore.commit(batch))
+  def collection(collectionName: CollectionPath): RIO[FirestoreDB, CollectionReference] =
+    RIO.accessM(_.firestore.collection(collectionName))
 
   def collectionGroup(collectionId: CollectionPath): RIO[FirestoreDB, Query] =
     RIO.accessM(_.firestore.collectionGroup(collectionId))
 
-  def create[A](
-    collectionPath: CollectionPath,
-    documentId: DocumentId,
+  def commit(batch: WriteBatch): RIO[FirestoreDB, List[WriteResult]] =
+    RIO.accessM(_.firestore.commit(batch))
+
+  def createDocument[A](
+    collectionReference: CollectionReference,
+    documentPath: DocumentPath,
     document: A
   ): RIO[FirestoreDB, WriteResult] =
-    RIO.accessM(_.firestore.create(collectionPath, documentId, document))
+    RIO.accessM(_.firestore.createDocument(collectionReference, documentPath, document))
 
   def delete(
-    collectionPath: CollectionPath,
-    documentId: DocumentId
+    collectionName: CollectionPath,
+    documentPath: DocumentPath
   ): RIO[FirestoreDB, WriteResult] =
-    RIO.accessM(_.firestore.delete(collectionPath, documentId))
+    RIO.accessM(_.firestore.delete(collectionName, documentPath))
 
   def document(
-    collectionPath: CollectionPath,
+    collectionReference: CollectionReference,
     documentPath: DocumentPath
   ): RIO[FirestoreDB, DocumentReference] =
-    RIO.accessM(_.firestore.document(collectionPath, documentPath))
+    RIO.accessM(_.firestore.document(collectionReference, documentPath))
 
   def getDocumentSnapshot(
-    collectionPath: CollectionPath,
-    documentId: DocumentId
+    collectionName: CollectionPath,
+    documentPath: DocumentPath
   ): RIO[FirestoreDB, DocumentSnapshot] =
-    RIO.accessM(_.firestore.getDocumentSnapshot(collectionPath, documentId))
+    RIO.accessM(_.firestore.getDocumentSnapshot(collectionName, documentPath))
 
   def getCollections: RIO[FirestoreDB, List[CollectionReference]] =
     RIO.accessM(_.firestore.getCollections)
 
   def getAllDocuments(
-    collectionPath: CollectionPath,
-    documentIds: List[DocumentId]
+    collectionName: CollectionPath
   ): RIO[FirestoreDB, List[QueryDocumentSnapshot]] =
     RIO.accessM(
       _.firestore
-        .getAllDocuments(collectionPath, documentIds)
+        .getAllDocuments(collectionName)
     )
 
   def set[A](
-    collectionPath: CollectionPath,
-    documentId: DocumentId,
+    collectionName: CollectionPath,
+    documentPath: DocumentPath,
     document: A
   ): RIO[FirestoreDB, WriteResult] =
-    RIO.accessM(_.firestore.set(collectionPath, documentId, document))
+    RIO.accessM(_.firestore.set(collectionName, documentPath, document))
+
+  def subCollection(
+    documentReference: DocumentReference,
+    collectionName: CollectionPath
+  ): RIO[FirestoreDB, CollectionReference] =
+    RIO.accessM(_.firestore.subCollection(documentReference, collectionName))
+
 }
