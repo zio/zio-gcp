@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
 Use the provided `FirestoreDB` wrapper:
 ```scala
 import zio.gcp.firestore._
+import zio.gcp.firestore.FirestoreDB
 
 val makeDocument = def create(
     documentPath: DocumentPath,
@@ -26,7 +27,7 @@ val makeDocument = def create(
   }
 
 val result: Task[WriteResult] =
-  makeDocument.provideManaged(FirestoreDB.Live.open())
+  makeDocument.provideManaged(FirestoreDB.Live.open)
 ```
 
 ## Getting help
