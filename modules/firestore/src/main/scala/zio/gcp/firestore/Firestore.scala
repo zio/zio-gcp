@@ -20,44 +20,47 @@ object FirestoreDB {
 
     def collection(collectionPath: CollectionPath): RIO[R, CollectionReference]
 
+    def collectionGroup(collectionPath: CollectionPath): RIO[R, Query]
+
     def commit(batch: WriteBatch): RIO[R, List[WriteResult]]
 
-    def collectionGroup(collectionId: CollectionPath): RIO[R, Query]
-
-    def create[A](
-      collectionPath: CollectionPath,
-      documentId: DocumentId,
+    def createDocument[A](
+      collectionReference: CollectionReference,
+      documentPath: DocumentPath,
       data: A
     ): RIO[R, WriteResult]
 
     def delete(
       collectionPath: CollectionPath,
-      documentId: DocumentId
+      documentId: DocumentPath
     ): RIO[R, WriteResult]
 
     def document(
-      collectionPath: CollectionPath,
+      collectionReference: CollectionReference,
       documentPath: DocumentPath
     ): RIO[R, DocumentReference]
 
     def getDocumentSnapshot(
       collectionPath: CollectionPath,
-      documentId: DocumentId
+      documentPath: DocumentPath
     ): RIO[R, DocumentSnapshot]
 
     def getCollections: RIO[R, List[CollectionReference]]
 
     def getAllDocuments(
-      collectionPath: CollectionPath,
-      documentIds: List[DocumentId]
+      collectionPath: CollectionPath
     ): RIO[R, List[QueryDocumentSnapshot]]
 
     def set[A](
       collectionPath: CollectionPath,
-      documentId: DocumentId,
+      documentPath: DocumentPath,
       data: A
     ): RIO[R, WriteResult]
 
+    def subCollection(
+      documentReference: DocumentReference,
+      collectionPath: CollectionPath
+    ): RIO[R, CollectionReference]
   }
 
   final class Live private (firestore: cloud.firestore.Firestore) extends Service[Any] {
@@ -66,6 +69,10 @@ object FirestoreDB {
 
     override def collection(collectionPath: CollectionPath): Task[CollectionReference] =
       Task(firestore.collection(collectionPath.value))
+
+    override def collectionGroup(
+      collectionPath: CollectionPath
+    ): Task[Query] = Task(firestore.collectionGroup(collectionPath.value))
 
     override def commit(batch: WriteBatch): Task[List[WriteResult]] =
       fromListenableFuture(
@@ -76,21 +83,17 @@ object FirestoreDB {
         )
       ).map(writeResults => writeResults.asScala.toList)
 
-    override def collectionGroup(
-      collectionPath: CollectionPath
-    ): Task[Query] = Task(firestore.collectionGroup(collectionPath.value))
-
-    override def create[A](
-      collectionPath: CollectionPath,
-      documentId: DocumentId,
+    override def createDocument[A](
+      collectionReference: CollectionReference,
+      documentPath: DocumentPath,
       document: A
     ): Task[WriteResult] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[WriteResult](
             firestore
-              .collection(collectionPath.value)
-              .document(documentId.value)
+              .collection(collectionReference.getPath)
+              .document(documentPath.value)
               .create(document)
           )
         )
@@ -98,30 +101,30 @@ object FirestoreDB {
 
     override def delete(
       collectionPath: CollectionPath,
-      documentId: DocumentId
+      documentPath: DocumentPath
     ): Task[WriteResult] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[WriteResult](
-            firestore.collection(collectionPath.value).document(documentId.value).delete
+            firestore.collection(collectionPath.value).document(documentPath.value).delete
           )
         )
       )
 
     override def document(
-      collectionPath: CollectionPath,
+      collectionReference: CollectionReference,
       documentPath: DocumentPath
     ): Task[DocumentReference] =
-      Task(firestore.collection(collectionPath.value).document(documentPath.value))
+      Task(collectionReference.document(documentPath.value))
 
     override def getDocumentSnapshot(
       collectionPath: CollectionPath,
-      documentId: DocumentId
+      documentPath: DocumentPath
     ): Task[DocumentSnapshot] =
       fromListenableFuture(
         UIO(
           new ApiFutureToListenableFuture[DocumentSnapshot](
-            firestore.collection(collectionPath.value).document(documentId.value).get
+            firestore.collection(collectionPath.value).document(documentPath.value).get
           )
         )
       )
@@ -130,8 +133,7 @@ object FirestoreDB {
       Task(firestore.listCollections.asScala.toList)
 
     override def getAllDocuments(
-      collectionPath: CollectionPath,
-      documentIds: List[DocumentId]
+      collectionPath: CollectionPath
     ): Task[List[QueryDocumentSnapshot]] =
       fromListenableFuture(
         UIO(
@@ -145,7 +147,7 @@ object FirestoreDB {
 
     override def set[A](
       collectionPath: CollectionPath,
-      documentId: DocumentId,
+      documentPath: DocumentPath,
       document: A
     ): Task[WriteResult] =
       fromListenableFuture(
@@ -153,11 +155,17 @@ object FirestoreDB {
           new ApiFutureToListenableFuture[WriteResult](
             firestore
               .collection(collectionPath.value)
-              .document(documentId.value)
+              .document(documentPath.value)
               .set(document)
           )
         )
       )
+
+    override def subCollection(
+      documentReference: DocumentReference,
+      collectionPath: CollectionPath
+    ): Task[CollectionReference] =
+      Task(documentReference.collection(collectionPath.value))
   }
 
   object Live {
