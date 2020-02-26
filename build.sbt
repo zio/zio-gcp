@@ -42,7 +42,7 @@ lazy val core = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC17",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -57,7 +57,7 @@ lazy val firestore = project
       "dev.zio"                %% "zio"                     % "1.0.0-RC17",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
       "com.google.cloud"       % "google-cloud-firestore"   % "1.32.4",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -72,7 +72,7 @@ lazy val pubsub = project
       "dev.zio"                %% "zio"                     % "1.0.0-RC17",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
       "com.google.cloud"       % "google-cloud-pubsub"      % "1.102.1",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -87,7 +87,7 @@ lazy val storage = project
       "dev.zio"                %% "zio"                     % "1.0.0-RC17",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
       "com.google.cloud"       % "google-cloud-storage"     % "1.103.1",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.3"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
   .enablePlugins(BuildInfoPlugin)
