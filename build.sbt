@@ -56,7 +56,7 @@ lazy val firestore = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC17",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.0",
-      "com.google.cloud"       % "google-cloud-firestore"   % "1.32.4",
+      "com.google.cloud"       % "google-cloud-firestore"   % "1.32.5",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
