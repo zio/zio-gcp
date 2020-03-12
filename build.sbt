@@ -41,7 +41,7 @@ lazy val core = project
   .settings(buildInfoSettings("zio.gcp.core"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"                %% "zio"                     % "1.0.0-RC18-1",
+      "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
@@ -54,7 +54,7 @@ lazy val firestore = project
   .settings(buildInfoSettings("zio.gcp.firestore"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"                %% "zio"                     % "1.0.0-RC18-1",
+      "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
       "com.google.cloud"       % "google-cloud-firestore"   % "1.32.4",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
@@ -69,7 +69,7 @@ lazy val pubsub = project
   .settings(buildInfoSettings("zio.gcp.pubsub"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"                %% "zio"                     % "1.0.0-RC18-1",
+      "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
       "com.google.cloud"       % "google-cloud-pubsub"      % "1.102.1",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
@@ -84,7 +84,7 @@ lazy val storage = project
   .settings(buildInfoSettings("zio.gcp.storage"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"                %% "zio"                     % "1.0.0-RC18-1",
+      "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
       "com.google.cloud"       % "google-cloud-storage"     % "1.103.1",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
