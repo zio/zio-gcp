@@ -86,7 +86,7 @@ lazy val storage = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
-      "com.google.cloud"       % "google-cloud-storage"     % "1.106.0",
+      "com.google.cloud"       % "google-cloud-storage"     % "1.107.0",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
     )
   )
