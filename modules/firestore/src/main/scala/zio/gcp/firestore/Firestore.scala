@@ -21,7 +21,7 @@ object Firestore {
     def delete(collectionPath: CollectionPath, documentPath: DocumentPath): Task[WriteResult]
     def document(collectionRef: CollectionReference, documentPath: DocumentPath): Task[DocumentReference]
     def documentSnapshot(collectionPath: CollectionPath, documentPath: DocumentPath): Task[DocumentSnapshot]
-    def set[A](collectionPath: CollectionPath, documentPath: DocumentPath, data: A): Task[WriteResult]
+    def set[A](collectionPath: CollectionPath, documentPath: DocumentPath, document: A): Task[WriteResult]
     def subCollection(documentRef: DocumentReference, collectionPath: CollectionPath): Task[CollectionReference]
   }
 

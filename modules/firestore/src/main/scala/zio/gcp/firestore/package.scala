@@ -42,8 +42,8 @@ package object firestore {
   def documentSnapshot(collectionPath: CollectionPath, documentPath: DocumentPath): RIO[Firestore, DocumentSnapshot] =
     RIO.accessM(_.get.documentSnapshot(collectionPath, documentPath))
 
-  def set[A](collectionPath: CollectionPath, documentPath: DocumentPath, data: A): RIO[Firestore, WriteResult] =
-    RIO.accessM(_.get.set(collectionPath, documentPath, data))
+  def set[A](collectionPath: CollectionPath, documentPath: DocumentPath, document: A): RIO[Firestore, WriteResult] =
+    RIO.accessM(_.get.set(collectionPath, documentPath, document))
 
   def subCollection(
     documentRef: DocumentReference,
