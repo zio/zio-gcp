@@ -42,7 +42,7 @@ lazy val core = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -55,9 +55,9 @@ lazy val firestore = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
-      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
+      "dev.zio"                %% "zio-interop-guava"       % "29.0.0.0",
       "com.google.cloud"       % "google-cloud-firestore"   % "1.32.4",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -71,8 +71,8 @@ lazy val pubsub = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
-      "com.google.cloud"       % "google-cloud-pubsub"      % "1.104.0",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+      "com.google.cloud"       % "google-cloud-pubsub"      % "1.104.1",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
   .enablePlugins(BuildInfoPlugin)
@@ -86,8 +86,8 @@ lazy val storage = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
-      "com.google.cloud"       % "google-cloud-storage"     % "1.106.0",
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+      "com.google.cloud"       % "google-cloud-storage"     % "1.107.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
   .enablePlugins(BuildInfoPlugin)
