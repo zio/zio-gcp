@@ -1,4 +1,5 @@
 import BuildHelper._
+import sbt.Keys.semanticdbEnabled
 
 inThisBuild(
   List(
@@ -18,12 +19,22 @@ inThisBuild(
     pgpSecretRing := file("/tmp/secret.asc"),
     scmInfo := Some(
       ScmInfo(url("https://github.com/zio/zio-gcp/"), "scm:git:git@github.com:zio/zio-gcp.git")
-    )
+    ),
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision,
+    scalacOptions += "-Ywarn-unused-import"
   )
 )
 
+addCompilerPlugin(scalafixSemanticdb)
+
 addCommandAlias("fmt", "all scalafmtSbt scalafmtAll")
 addCommandAlias("check", "all scalafmtSbtCheck scalafmtCheckAll")
+addCommandAlias("fix", "all compile:scalafix test:scalafix")
+addCommandAlias(
+  "fixCheck",
+  "; compile:scalafix --check ; test:scalafix --check"
+)
 
 lazy val root = project
   .in(file("."))
