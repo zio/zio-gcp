@@ -82,7 +82,7 @@ lazy val pubsub = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
-      "com.google.cloud"       % "google-cloud-pubsub"      % "1.104.1",
+      "com.google.cloud"       % "google-cloud-pubsub"      % "1.105.0",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
