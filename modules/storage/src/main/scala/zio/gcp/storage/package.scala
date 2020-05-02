@@ -1,35 +1,24 @@
 package zio.gcp
 
-import com.google.cloud.storage.{ Storage => _ }
-import com.google.cloud.storage.StorageBatch
-import com.google.cloud.storage.Storage.ComposeRequest
-import com.google.cloud.storage.Blob
-import com.google.cloud.storage.Storage.CopyRequest
-import com.google.cloud.storage.CopyWriter
-import com.google.cloud.storage.BlobInfo
-import com.google.cloud.storage.Storage.BlobTargetOption
-import com.google.cloud.storage.Acl
-import com.google.cloud.storage.Storage.BucketSourceOption
-import com.google.cloud.storage.ServiceAccount
-import com.google.cloud.storage.Storage.CreateHmacKeyOption
-import com.google.cloud.storage.HmacKey
-import com.google.cloud.storage.Storage.BlobSourceOption
-import com.google.cloud.storage.BlobId
-import com.google.cloud.storage.Storage.DeleteHmacKeyOption
-import com.google.cloud.storage.Storage.BlobGetOption
-import com.google.cloud.storage.Storage.GetHmacKeyOption
-import com.google.cloud.storage.Storage.BlobListOption
-import com.google.cloud.storage.Storage.BucketListOption
-import com.google.api.gax.paging.Page
-import com.google.cloud.storage.Bucket
-import com.google.cloud.storage.Storage.BucketTargetOption
-import com.google.api.services.storage.model.HmacKeyMetadata
-import java.util.concurrent.TimeUnit
-import com.google.cloud.storage.Storage.SignUrlOption
 import java.net.URL
-import com.google.cloud.storage.Storage.UpdateHmacKeyOption
-import com.google.cloud.storage.Storage.BlobWriteOption
+import java.util.concurrent.TimeUnit
+
+import com.google.api.gax.paging.Page
 import com.google.cloud.storage.HmacKey.HmacKeyState
+import com.google.cloud.storage.Storage._
+import com.google.cloud.storage.{
+  Acl,
+  Blob,
+  BlobId,
+  BlobInfo,
+  Bucket,
+  BucketInfo,
+  CopyWriter,
+  HmacKey,
+  ServiceAccount,
+  StorageBatch,
+  Storage => _
+}
 import zio.{ Has, RIO }
 
 package object storage {
@@ -50,7 +39,7 @@ package object storage {
     RIO.accessM(_.get.create(blobInfo: BlobInfo, content, options))
   def create(blobInfo: BlobInfo, options: List[BlobTargetOption]): RIO[Storage, Blob] =
     RIO.accessM(_.get.create(blobInfo, options))
-  def createAcl(blob: Blob, acl: Acl): RIO[Storage, Acl]     = RIO.accessM(_.get.createAcl(blob, acl))
+  def createAcl(blobId: BlobId, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.createAcl(blobId, acl))
   def createAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.createAcl(bucket, acl))
   def createAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): RIO[Storage, Acl] =
     RIO.accessM(_.get.createAcl(bucket, acl, options))
@@ -63,7 +52,7 @@ package object storage {
   def delete(blobIds: Iterable[BlobId]): RIO[Storage, List[Boolean]] = RIO.accessM(_.get.delete(blobIds))
   def delete(bucket: String, options: List[BucketSourceOption]): RIO[Storage, Boolean] =
     RIO.accessM(_.get.delete(bucket, options))
-  def delete(bucket: String, blob: String, options: List[BucketSourceOption]): RIO[Storage, Boolean] =
+  def delete(bucket: String, blob: String, options: List[BlobSourceOption]): RIO[Storage, Boolean] =
     RIO.accessM(_.get.delete(bucket, blob, options))
   def deleteAcl(blobId: BlobId, entity: Acl.Entity): RIO[Storage, Boolean] =
     RIO.accessM(_.get.deleteAcl(blobId, entity))
@@ -73,7 +62,10 @@ package object storage {
     RIO.accessM(_.get.deleteAcl(bucket, entity, options))
   def deleteDefaultAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Boolean] =
     RIO.accessM(_.get.deleteDefaultAcl(bucket, entity))
-  def deleteHmacKey(hmacKeyMetaData: HmacKey.HmacKeyMetadata, options: List[DeleteHmacKeyOption]): RIO[Storage, Unit] =
+  def deleteHmacKey(
+    hmacKeyMetaData: com.google.cloud.storage.HmacKey.HmacKeyMetadata,
+    options: List[DeleteHmacKeyOption]
+  ): RIO[Storage, Unit] =
     RIO.accessM(_.get.deleteHmacKey(hmacKeyMetaData, options))
   def get(blobIds: List[BlobId]): RIO[Storage, List[Blob]] = RIO.accessM(_.get.get(blobIds))
   def get(blobId: BlobId): RIO[Storage, Option[Blob]]      = RIO.accessM(_.get.get(blobId))
@@ -102,9 +94,10 @@ package object storage {
   def listDefaultAcls(bucket: String): RIO[Storage, List[Acl]] = RIO.accessM(_.get.listDefaultAcls(bucket))
   def listHmacKeys(
     options: List[com.google.cloud.storage.Storage.ListHmacKeysOption]
-  ): RIO[Storage, Page[HmacKeyMetadata]] = RIO.accessM(_.get.listHmacKeys(options))
-  def lockRetentionPolicy(bucket: String, options: List[BucketTargetOption]): RIO[Storage, Bucket] =
-    RIO.accessM(_.get.lockRetentionPolicy(bucket, options))
+  ): RIO[Storage, com.google.api.gax.paging.Page[com.google.cloud.storage.HmacKey.HmacKeyMetadata]] =
+    RIO.accessM(_.get.listHmacKeys(options))
+  def lockRetentionPolicy(bucketInfo: BucketInfo, options: List[BucketTargetOption]): RIO[Storage, Bucket] =
+    RIO.accessM(_.get.lockRetentionPolicy(bucketInfo, options))
   def readAllBytes(blob: BlobId, options: List[BlobSourceOption]): RIO[Storage, Array[Byte]] =
     RIO.accessM(_.get.readAllBytes(blob, options))
   def readAllBytes(bucket: String, blob: String, options: List[BlobSourceOption]): RIO[Storage, Array[Byte]] =
@@ -141,11 +134,12 @@ package object storage {
     RIO.accessM(_.get.updateAcl(bucket, acl, options))
   def updateDefaultAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.updateDefaultAcl(bucket, acl))
   def updateHmacKeyState(
-    hmacKeyMetaData: HmacKeyMetadata,
+    hmacKeyMetaData: com.google.cloud.storage.HmacKey.HmacKeyMetadata,
     state: HmacKeyState,
     options: List[UpdateHmacKeyOption]
-  ): RIO[Storage, HmacKeyMetadata] = RIO.accessM(_.get.updateHmacKeyState(hmacKeyMetaData, state, options))
-  def write(blobInfo: BlobInfo, options: List[BlobWriteOption]): RIO[Storage, com.google.cloud.WriteChannel] =
-    RIO.accessM(_.get.write(blobInfo, options))
+  ): RIO[Storage, com.google.cloud.storage.HmacKey.HmacKeyMetadata] =
+    RIO.accessM(_.get.updateHmacKeyState(hmacKeyMetaData, state, options))
+  def writer(blobInfo: BlobInfo, options: List[BlobWriteOption]): RIO[Storage, com.google.cloud.WriteChannel] =
+    RIO.accessM(_.get.writer(blobInfo, options))
   def writer(signedURL: URL): RIO[Storage, com.google.cloud.WriteChannel] = RIO.accessM(_.get.writer(signedURL))
 }

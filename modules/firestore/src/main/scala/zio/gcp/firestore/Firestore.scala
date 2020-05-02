@@ -1,10 +1,10 @@
 package zio.gcp.firestore
 
 import com.google.api.core.ApiFutureToListenableFuture
+import com.google.cloud.firestore
 import com.google.cloud.firestore.{ Firestore => _, _ }
 
 import scala.jdk.CollectionConverters._
-
 import zio._
 import zio.interop.guava._
 
@@ -27,7 +27,8 @@ object Firestore {
 
   def live: Layer[Throwable, Firestore] =
     ZLayer.fromManaged {
-      val acquire = IO.effect(FirestoreOptions.getDefaultInstance().toBuilder().build().getService())
+      val acquire: Task[firestore.Firestore] =
+        IO.effect(FirestoreOptions.getDefaultInstance().toBuilder().build().getService())
       val release = (firestore: com.google.cloud.firestore.Firestore) => IO.effect(firestore.close()).orDie
 
       Managed.make(acquire)(release).map { firestore =>
