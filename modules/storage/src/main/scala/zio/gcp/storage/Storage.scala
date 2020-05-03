@@ -14,7 +14,7 @@ import scala.jdk.CollectionConverters._
 
 object Storage {
   trait Service {
-    def batch(): Task[StorageBatch]
+    def batch: Task[StorageBatch]
     def compose(composeRequest: ComposeRequest): Task[Blob]
     def copy(copyRequest: CopyRequest): Task[CopyWriter]
     def create(
@@ -25,22 +25,18 @@ object Storage {
       options: List[BlobTargetOption]
     ): Task[Blob]
     def create(blobInfo: BlobInfo, content: Array[Byte], options: List[BlobTargetOption]): Task[Blob]
-    def create(blobInfo: BlobInfo, options: List[BlobTargetOption]): Task[Blob]
     def createAcl(blobId: BlobId, acl: Acl): Task[Acl]
-    def createAcl(bucket: String, acl: Acl): Task[Acl]
     def createAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): Task[Acl]
     def createHmacKey(
       serviceAccount: com.google.cloud.storage.ServiceAccount,
       options: List[CreateHmacKeyOption]
     ): Task[com.google.cloud.storage.HmacKey]
     def delete(blobIds: List[BlobId]): Task[List[Boolean]]
-    def delete(blobId: BlobId): Task[Boolean]
     def delete(blobId: BlobId, options: List[BlobSourceOption]): Task[Boolean]
     def delete(blobIds: Iterable[BlobId]): Task[List[Boolean]]
     def delete(bucket: String, options: List[BucketSourceOption]): Task[Boolean]
     def delete(bucket: String, blob: String, options: List[BlobSourceOption]): Task[Boolean]
     def deleteAcl(blob: BlobId, entity: Acl.Entity): Task[Boolean]
-    def deleteAcl(bucket: String, entity: Acl.Entity): Task[Boolean]
     def deleteAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption]): Task[Boolean]
     def deleteDefaultAcl(bucket: String, entity: Acl.Entity): Task[Boolean]
     def deleteHmacKey(
@@ -48,11 +44,9 @@ object Storage {
       options: List[DeleteHmacKeyOption]
     ): Task[Unit]
     def get(blobIds: List[BlobId]): Task[List[Blob]]
-    def get(blobId: BlobId): Task[Option[Blob]]
     def get(blobId: BlobId, options: List[BlobGetOption]): Task[Option[Blob]]
     def get(blobIds: Iterable[BlobId]): Task[List[Blob]]
     def getAcl(blob: BlobId, entity: Acl.Entity): Task[Option[Acl]]
-    def getAcl(bucket: String, entity: Acl.Entity): Task[Option[Acl]]
     def getAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption]): Task[Option[Acl]]
     def getDefaultAcl(bucket: String, entity: Acl.Entity): Task[Option[Acl]]
     def getHmacKey(
@@ -64,7 +58,6 @@ object Storage {
     def list(options: List[BucketListOption]): Task[com.google.api.gax.paging.Page[com.google.cloud.storage.Bucket]]
     def list(bucket: String, options: List[BlobListOption]): Task[Page[Blob]]
     def listAcls(blob: BlobId): Task[List[Acl]]
-    def listAcls(bucket: String): Task[List[Acl]]
     def listAcls(bucket: String, options: List[BucketSourceOption]): Task[List[Acl]]
     def listDefaultAcls(bucket: String): Task[List[Acl]]
     def listHmacKeys(
@@ -90,12 +83,9 @@ object Storage {
       options: List[BucketSourceOption]
     ): Task[List[Boolean]]
     def update(blobInfos: List[BlobInfo]): Task[List[Blob]]
-    def update(blobInfo: BlobInfo): Task[Blob]
     def update(blobInfo: BlobInfo, options: List[BlobTargetOption]): Task[Blob]
     def update(bucketInfo: BucketInfo, options: List[BucketTargetOption]): Task[com.google.cloud.storage.Bucket]
-    def update(blobInfos: Iterable[BlobInfo]): Task[List[Blob]]
     def updateAcl(blobId: BlobId, acl: Acl): Task[Acl]
-    def updateAcl(bucket: String, acl: Acl): Task[Acl]
     def updateAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): Task[Acl]
     def updateDefaultAcl(bucket: String, acl: Acl): Task[Acl]
     def updateHmacKeyState(
@@ -114,7 +104,7 @@ object Storage {
 
       Managed.fromEffect(acquire).map { storage =>
         new Service {
-          override def batch(): Task[StorageBatch] = Task(storage.batch())
+          override def batch: Task[StorageBatch] = Task(storage.batch())
 
           override def compose(composeRequest: ComposeRequest): Task[Blob] = Task(storage.compose(composeRequest))
 
@@ -131,12 +121,7 @@ object Storage {
           override def create(blobInfo: BlobInfo, content: Array[Byte], options: List[BlobTargetOption]): Task[Blob] =
             Task(storage.create(blobInfo, content, options: _*))
 
-          override def create(blobInfo: BlobInfo, options: List[BlobTargetOption]): Task[Blob] =
-            Task(storage.create(blobInfo, options: _*))
-
           override def createAcl(blobId: BlobId, acl: Acl): Task[Acl] = Task(storage.createAcl(blobId, acl))
-
-          override def createAcl(bucket: String, acl: Acl): Task[Acl] = Task(storage.createAcl(bucket, acl))
 
           override def createAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): Task[Acl] =
             Task(storage.createAcl(bucket, acl, options: _*))
@@ -148,8 +133,6 @@ object Storage {
 
           override def delete(blobIds: List[BlobId]): Task[List[Boolean]] =
             Task(storage.delete(blobIds: _*).asScala.toList.map(Boolean.unbox(_)))
-
-          override def delete(blobId: BlobId): Task[Boolean] = Task(storage.delete(blobId))
 
           override def delete(blobId: BlobId, options: List[BlobSourceOption]): Task[Boolean] =
             Task(storage.delete(blobId, options: _*))
@@ -166,9 +149,6 @@ object Storage {
           override def deleteAcl(blob: BlobId, entity: Acl.Entity): Task[Boolean] =
             Task(storage.deleteAcl(blob, entity))
 
-          override def deleteAcl(bucket: String, entity: Acl.Entity): Task[Boolean] =
-            Task(storage.deleteAcl(bucket, entity))
-
           override def deleteAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption]): Task[Boolean] =
             Task(storage.deleteAcl(bucket, entity, options: _*))
 
@@ -184,8 +164,6 @@ object Storage {
           override def get(blobIds: List[BlobId]): Task[List[Blob]] =
             Task(storage.get(blobIds.asJavaCollection).asScala.toList)
 
-          override def get(blobId: BlobId): Task[Option[Blob]] = Task(Option(storage.get(blobId)))
-
           override def get(blobId: BlobId, options: List[BlobGetOption]): Task[Option[Blob]] =
             Task(Option(storage.get(blobId, options: _*)))
 
@@ -194,9 +172,6 @@ object Storage {
 
           override def getAcl(blob: BlobId, entity: Acl.Entity): Task[Option[Acl]] =
             Task(Option(storage.getAcl(blob, entity)))
-
-          override def getAcl(bucket: String, entity: Acl.Entity): Task[Option[Acl]] =
-            Task(Option(storage.getAcl(bucket, entity)))
 
           override def getAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption])
             : Task[Option[Acl]] = Task(Option(storage.getAcl(bucket, entity, options: _*)))
@@ -222,8 +197,6 @@ object Storage {
             Task(storage.list(bucket, options: _*))
 
           override def listAcls(blob: BlobId): Task[List[Acl]] = Task(storage.listAcls(blob).asScala.toList)
-
-          override def listAcls(bucket: String): Task[List[Acl]] = Task(storage.listAcls(bucket).asScala.toList)
 
           override def listAcls(bucket: String, options: List[BucketSourceOption]): Task[List[Acl]] =
             Task(storage.listAcls(bucket, options: _*).asScala.toList)
@@ -263,11 +236,8 @@ object Storage {
             Task(
               storage.testIamPermissions(bucket, permissions.asJava, options: _*).asScala.toList.map(Boolean.unbox(_))
             )
-
           override def update(blobInfos: List[BlobInfo]): Task[List[Blob]] =
             Task(storage.update(blobInfos: _*).asScala.toList)
-
-          override def update(blobInfo: BlobInfo): Task[Blob] = Task(storage.update(blobInfo))
 
           override def update(blobInfo: BlobInfo, options: List[BlobTargetOption]): Task[Blob] =
             Task(storage.update(blobInfo, options: _*))
@@ -276,12 +246,7 @@ object Storage {
             : Task[com.google.cloud.storage.Bucket] =
             Task(storage.update(bucketInfo, options: _*))
 
-          override def update(blobInfos: Iterable[BlobInfo]): Task[List[Blob]] =
-            Task(storage.update(blobInfos.asJavaCollection).asScala.toList)
-
           override def updateAcl(blobId: BlobId, acl: Acl): Task[Acl] = Task(storage.updateAcl(blobId, acl))
-
-          override def updateAcl(bucket: String, acl: Acl): Task[Acl] = Task(storage.updateAcl(bucket, acl))
 
           override def updateAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): Task[Acl] =
             Task(storage.updateAcl(bucket, acl, options: _*))

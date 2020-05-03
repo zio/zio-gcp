@@ -25,7 +25,7 @@ package object storage {
 
   type Storage = Has[Storage.Service]
 
-  def batch(): RIO[Storage, StorageBatch]                         = RIO.accessM(_.get.batch())
+  def batch: RIO[Storage, StorageBatch]                           = RIO.accessM(_.get.batch)
   def compose(composeRequest: ComposeRequest): RIO[Storage, Blob] = RIO.accessM(_.get.compose(composeRequest))
   def copy(copyRequest: CopyRequest): RIO[Storage, CopyWriter]    = RIO.accessM(_.get.copy(copyRequest))
   def create(
@@ -38,15 +38,15 @@ package object storage {
   def create(blobInfo: BlobInfo, content: Array[Byte], options: List[BlobTargetOption]): RIO[Storage, Blob] =
     RIO.accessM(_.get.create(blobInfo: BlobInfo, content, options))
   def create(blobInfo: BlobInfo, options: List[BlobTargetOption]): RIO[Storage, Blob] =
-    RIO.accessM(_.get.create(blobInfo, options))
+    RIO.accessM(_.get.create(blobInfo, Array.empty, options))
   def createAcl(blobId: BlobId, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.createAcl(blobId, acl))
-  def createAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.createAcl(bucket, acl))
+  def createAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.createAcl(bucket, acl, List.empty))
   def createAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): RIO[Storage, Acl] =
     RIO.accessM(_.get.createAcl(bucket, acl, options))
   def createHmacKey(serviceAccount: ServiceAccount, options: List[CreateHmacKeyOption]): RIO[Storage, HmacKey] =
     RIO.accessM(_.get.createHmacKey(serviceAccount, options))
   def delete(blobIds: List[BlobId]): RIO[Storage, List[Boolean]] = RIO.accessM(_.get.delete(blobIds))
-  def delete(blobId: BlobId): RIO[Storage, Boolean]              = RIO.accessM(_.get.delete(blobId))
+  def delete(blobId: BlobId): RIO[Storage, Boolean]              = RIO.accessM(_.get.delete(blobId, List.empty))
   def delete(blobId: BlobId, options: List[BlobSourceOption]): RIO[Storage, Boolean] =
     RIO.accessM(_.get.delete(blobId, options))
   def delete(blobIds: Iterable[BlobId]): RIO[Storage, List[Boolean]] = RIO.accessM(_.get.delete(blobIds))
@@ -57,7 +57,7 @@ package object storage {
   def deleteAcl(blobId: BlobId, entity: Acl.Entity): RIO[Storage, Boolean] =
     RIO.accessM(_.get.deleteAcl(blobId, entity))
   def deleteAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Boolean] =
-    RIO.accessM(_.get.deleteAcl(bucket, entity))
+    RIO.accessM(_.get.deleteAcl(bucket, entity, List.empty))
   def deleteAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption]): RIO[Storage, Boolean] =
     RIO.accessM(_.get.deleteAcl(bucket, entity, options))
   def deleteDefaultAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Boolean] =
@@ -68,12 +68,13 @@ package object storage {
   ): RIO[Storage, Unit] =
     RIO.accessM(_.get.deleteHmacKey(hmacKeyMetaData, options))
   def get(blobIds: List[BlobId]): RIO[Storage, List[Blob]] = RIO.accessM(_.get.get(blobIds))
-  def get(blobId: BlobId): RIO[Storage, Option[Blob]]      = RIO.accessM(_.get.get(blobId))
+  def get(blobId: BlobId): RIO[Storage, Option[Blob]]      = RIO.accessM(_.get.get(blobId, List.empty))
   def get(blobId: BlobId, options: List[BlobGetOption]): RIO[Storage, Option[Blob]] =
     RIO.accessM(_.get.get(blobId, options))
-  def get(blobIds: Iterable[BlobId]): RIO[Storage, List[Blob]]              = RIO.accessM(_.get.get(blobIds))
-  def getAcl(blob: BlobId, entity: Acl.Entity): RIO[Storage, Option[Acl]]   = RIO.accessM(_.get.getAcl(blob, entity))
-  def getAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Option[Acl]] = RIO.accessM(_.get.getAcl(bucket, entity))
+  def get(blobIds: Iterable[BlobId]): RIO[Storage, List[Blob]]            = RIO.accessM(_.get.get(blobIds))
+  def getAcl(blob: BlobId, entity: Acl.Entity): RIO[Storage, Option[Acl]] = RIO.accessM(_.get.getAcl(blob, entity))
+  def getAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Option[Acl]] =
+    RIO.accessM(_.get.getAcl(bucket, entity, List.empty))
   def getAcl(bucket: String, entity: Acl.Entity, options: List[BucketSourceOption]): RIO[Storage, Option[Acl]] =
     RIO.accessM(_.get.getAcl(bucket, entity, options))
   def getDefaultAcl(bucket: String, entity: Acl.Entity): RIO[Storage, Option[Acl]] =
@@ -88,7 +89,7 @@ package object storage {
   def list(bucket: String, options: List[BlobListOption]): RIO[Storage, Page[Blob]] =
     RIO.accessM(_.get.list(bucket, options))
   def listAcls(blob: BlobId): RIO[Storage, List[Acl]]   = RIO.accessM(_.get.listAcls(blob))
-  def listAcls(bucket: String): RIO[Storage, List[Acl]] = RIO.accessM(_.get.listAcls(bucket))
+  def listAcls(bucket: String): RIO[Storage, List[Acl]] = RIO.accessM(_.get.listAcls(bucket, List.empty))
   def listAcls(bucket: String, options: List[BucketSourceOption]): RIO[Storage, List[Acl]] =
     RIO.accessM(_.get.listAcls(bucket, options))
   def listDefaultAcls(bucket: String): RIO[Storage, List[Acl]] = RIO.accessM(_.get.listDefaultAcls(bucket))
@@ -122,14 +123,13 @@ package object storage {
     options: List[BucketSourceOption]
   ): RIO[Storage, List[Boolean]]                                  = RIO.accessM(_.get.testIamPermissions(bucket, permissions, options))
   def update(blobInfos: List[BlobInfo]): RIO[Storage, List[Blob]] = RIO.accessM(_.get.update(blobInfos))
-  def update(blobInfo: BlobInfo): RIO[Storage, Blob]              = RIO.accessM(_.get.update(blobInfo))
+  def update(blobInfo: BlobInfo): RIO[Storage, Blob]              = RIO.accessM(_.get.update(blobInfo, List.empty))
   def update(blobInfo: BlobInfo, options: List[BlobTargetOption]): RIO[Storage, Blob] =
     RIO.accessM(_.get.update(blobInfo, options))
   def update(bucketInfo: com.google.cloud.storage.BucketInfo, options: List[BucketTargetOption]): RIO[Storage, Bucket] =
     RIO.accessM(_.get.update(bucketInfo, options))
-  def update(blobInfos: Iterable[BlobInfo]): RIO[Storage, List[Blob]] = RIO.accessM(_.get.update(blobInfos))
-  def updateAcl(blobId: BlobId, acl: Acl): RIO[Storage, Acl]          = RIO.accessM(_.get.updateAcl(blobId, acl))
-  def updateAcl(bucket: String, acl: Acl): RIO[Storage, Acl]          = RIO.accessM(_.get.updateAcl(bucket, acl))
+  def updateAcl(blobId: BlobId, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.updateAcl(blobId, acl))
+  def updateAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.updateAcl(bucket, acl, List.empty))
   def updateAcl(bucket: String, acl: Acl, options: List[BucketSourceOption]): RIO[Storage, Acl] =
     RIO.accessM(_.get.updateAcl(bucket, acl, options))
   def updateDefaultAcl(bucket: String, acl: Acl): RIO[Storage, Acl] = RIO.accessM(_.get.updateDefaultAcl(bucket, acl))
