@@ -232,7 +232,7 @@ object Storage {
             : Task[URL] = Task(storage.signUrl(blobInfo, duration, unit, options: _*))
 
           override def testIamPermissions(bucket: String, permissions: List[String], options: List[BucketSourceOption])
-            : Task[List[Boolean]] =
+            : Task[List[Boolean]]                                          =
             Task(
               storage.testIamPermissions(bucket, permissions.asJava, options: _*).asScala.toList.map(Boolean.unbox(_))
             )
