@@ -103,4 +103,3 @@ lazy val storage = project
   )
   .enablePlugins(BuildInfoPlugin)
 
-resolvers += "google" at "https://maven.google.com/"
