@@ -1,4 +1,9 @@
 package zio.gcp.pubsub
 
-//TODO
-package object topicadmin {}
+import zio.Has
+
+package object topicadmin {
+
+  type TopicAdmin = Has[TopicAdmin.Service]
+
+}

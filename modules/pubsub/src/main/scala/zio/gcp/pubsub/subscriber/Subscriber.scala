@@ -1,11 +1,10 @@
 package zio.gcp.pubsub.subscriber
 
-import zio.Task
+import zio._
 import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.api.core.ApiService
 import com.google.api.gax.batching.FlowControlSettings
-import zio._
 import com.google.cloud.pubsub.v1.{ Subscriber => Subscriber_ }
 
 object Subscriber {
