@@ -102,4 +102,3 @@ lazy val storage = project
     )
   )
   .enablePlugins(BuildInfoPlugin)
-
