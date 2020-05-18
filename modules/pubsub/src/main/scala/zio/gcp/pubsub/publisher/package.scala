@@ -13,10 +13,10 @@ package object publisher {
   def awaitTermination(duration: Long, unit: TimeUnit): RIO[Publisher, Boolean] =
     RIO.accessM(_.get.awaitTermination(duration, unit))
 
-  def getBatchSettings(): RIO[Publisher, BatchingSettings] =
+  def getBatchSettings: RIO[Publisher, BatchingSettings] =
     RIO.accessM(_.get.getBatchSettings)
 
-  def getTopicName(): RIO[Publisher, TopicName] = RIO.accessM(_.get.getTopicName)
+  def getTopicName: RIO[Publisher, TopicName] = RIO.accessM(_.get.getTopicName)
 
   def publish(message: PubsubMessage): RIO[Publisher, String] = RIO.accessM(_.get.publish(message))
 

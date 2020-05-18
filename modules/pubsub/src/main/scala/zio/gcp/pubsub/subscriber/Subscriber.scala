@@ -5,7 +5,7 @@ import com.google.pubsub.v1.ProjectSubscriptionName
 import com.google.cloud.pubsub.v1.MessageReceiver
 import com.google.api.core.ApiService
 import com.google.api.gax.batching.FlowControlSettings
-import com.google.cloud.pubsub.v1.{ Subscriber => Subscriber_ }
+import com.google.cloud.pubsub.v1.{ Subscriber => GSubscriber }
 
 object Subscriber {
   trait Service {
@@ -16,8 +16,8 @@ object Subscriber {
 
   def live(subscription: ProjectSubscriptionName, receiver: MessageReceiver): Layer[Throwable, Subscriber] =
     ZLayer.fromManaged {
-      val acquire = IO.effect(Subscriber_.newBuilder(subscription, receiver).build())
-      val release = (subscriber: Subscriber_) => IO.effect(subscriber.stopAsync()).orDie
+      val acquire = IO.effect(GSubscriber.newBuilder(subscription, receiver).build())
+      val release = (subscriber: GSubscriber) => IO.effect(subscriber.stopAsync()).orDie
 
       Managed.make(acquire)(release).map { subscriber =>
         new Service {

@@ -31,7 +31,7 @@ object TopicAdmin {
     def getStub: Task[PublisherStub]
     def getTopic(request: GetTopicRequest): Task[Topic]
     def getTopic(topic: String): Task[Topic]
-    def isShutdown(): Task[Boolean]
+    def isShutdown: Task[Boolean]
     def listTopics(request: ListTopicsRequest): Task[TopicAdminClient.ListTopicsPagedResponse]
     def listTopics(project: ProjectName): Task[TopicAdminClient.ListTopicsPagedResponse]
     def listTopics(project: String): Task[TopicAdminClient.ListTopicsPagedResponse]
@@ -40,8 +40,8 @@ object TopicAdmin {
     ): Task[TopicAdminClient.ListTopicSubscriptionsPagedResponse]
     def listTopicSubscriptions(topic: String): Task[TopicAdminClient.ListTopicSubscriptionsPagedResponse]
     def setIamPolicy(request: SetIamPolicyRequest): Task[Policy]
-    def shutdown(): Task[Unit]
-    def shutdownNow(): Task[Unit]
+    def shutdown: Task[Unit]
+    def shutdownNow: Task[Unit]
     def testIamPermissions(
       request: TestIamPermissionsRequest
     ): Task[TestIamPermissionsResponse]
@@ -76,7 +76,7 @@ object TopicAdmin {
 
           def getTopic(topic: String): Task[Topic] = Task(topicAdminClient.getTopic(topic))
 
-          def isShutdown(): Task[Boolean] = Task(topicAdminClient.isShutdown())
+          def isShutdown: Task[Boolean] = Task(topicAdminClient.isShutdown())
 
           def listTopics(request: ListTopicsRequest): Task[TopicAdminClient.ListTopicsPagedResponse] =
             Task(topicAdminClient.listTopics(request))
@@ -97,9 +97,9 @@ object TopicAdmin {
 
           def setIamPolicy(request: SetIamPolicyRequest): Task[Policy] = Task(topicAdminClient.setIamPolicy(request))
 
-          def shutdown(): Task[Unit] = Task(topicAdminClient.shutdown())
+          def shutdown: Task[Unit] = Task(topicAdminClient.shutdown())
 
-          def shutdownNow(): Task[Unit] = Task(topicAdminClient.shutdownNow())
+          def shutdownNow: Task[Unit] = Task(topicAdminClient.shutdownNow())
 
           def testIamPermissions(request: TestIamPermissionsRequest): Task[TestIamPermissionsResponse] =
             Task(topicAdminClient.testIamPermissions(request))
