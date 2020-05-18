@@ -43,7 +43,8 @@ lazy val root = project
     core,
     firestore,
     pubsub,
-    storage
+    storage,
+    redis
   )
 
 lazy val core = project
@@ -98,6 +99,21 @@ lazy val storage = project
       "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
       "com.google.cloud"       % "google-cloud-storage"     % "1.108.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
+    )
+  )
+  .enablePlugins(BuildInfoPlugin)
+
+lazy val redis = project
+  .in(file("modules/redis"))
+  .dependsOn(core)
+  .settings(stdSettings("zio-gcp-redis"))
+  .settings(buildInfoSettings("zio.gcp.redis"))
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio"                %% "zio"                     % "1.0.0-RC18-2",
+      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
+      "com.google.cloud"       % "google-cloud-redis"       % "1.0.0",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
