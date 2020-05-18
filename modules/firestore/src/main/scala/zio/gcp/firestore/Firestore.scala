@@ -29,7 +29,7 @@ object Firestore {
     ZLayer.fromManaged {
       val acquire: Task[firestore.Firestore] =
         Task.effect(FirestoreOptions.getDefaultInstance().toBuilder().build().getService())
-      val release = (firestore: com.google.cloud.firestore.Firestore) => IO.effect(firestore.close()).orDie
+      val release                            = (firestore: com.google.cloud.firestore.Firestore) => IO.effect(firestore.close()).orDie
 
       Managed.make(acquire)(release).map { firestore =>
         new Service {
