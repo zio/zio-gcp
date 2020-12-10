@@ -113,7 +113,7 @@ lazy val redis = project
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC21",
       "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
-      "com.google.cloud"        % "google-cloud-redis"      % "1.0.0",
+      "com.google.cloud"        % "google-cloud-redis"      % "1.1.6",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
