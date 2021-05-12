@@ -42,6 +42,7 @@ lazy val root = project
   .aggregate(
     core,
     firestore,
+    memcached,
     pubsub,
     storage,
     redis
@@ -69,6 +70,21 @@ lazy val firestore = project
       "dev.zio"                %% "zio"                     % "1.0.0-RC21",
       "dev.zio"                %% "zio-interop-guava"       % "29.0.0.0",
       "com.google.cloud"        % "google-cloud-firestore"  % "1.32.4",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
+    )
+  )
+  .enablePlugins(BuildInfoPlugin)
+
+lazy val memcached = project
+  .in(file("modules/memcached"))
+  .dependsOn(core)
+  .settings(stdSettings("zio-gcp-memcached"))
+  .settings(buildInfoSettings("zio.gcp.memcached"))
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio"                %% "zio"                     % "1.0.0-RC21",
+      "dev.zio"                %% "zio-interop-guava"       % "29.0.0.0",
+      "com.google.cloud"        % "google-cloud-memcache"   % "0.2.10",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
   )
