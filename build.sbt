@@ -82,7 +82,7 @@ lazy val pubsub = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC21",
-      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
+      "dev.zio"                %% "zio-interop-guava"       % "29.0.0.1",
       "com.google.cloud"        % "google-cloud-pubsub"     % "1.107.0",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
@@ -97,7 +97,7 @@ lazy val storage = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC21",
-      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
+      "dev.zio"                %% "zio-interop-guava"       % "29.0.0.1",
       "com.google.cloud"        % "google-cloud-storage"    % "1.109.1",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
@@ -112,7 +112,7 @@ lazy val redis = project
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"                %% "zio"                     % "1.0.0-RC21",
-      "dev.zio"                %% "zio-interop-guava"       % "28.2.0.1",
+      "dev.zio"                %% "zio-interop-guava"       % "29.0.0.1",
       "com.google.cloud"        % "google-cloud-redis"      % "1.0.0",
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
     )
